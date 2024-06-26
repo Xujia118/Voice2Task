@@ -1,0 +1,22 @@
+Plan
+Backend
+Part 1
+Get audio file from frontend. This is temporarily skipped
+Access an audio speech file from S3 bucket
+Send this file to AWS Transcribe
+Set up Transcribe to send text output back to S3
+Fetch the text file at the backend (or directly send it to openAI if possible)
+
+Part 2
+send text file to openAI with the prompt "Summarize the text and make a list of action items"
+Retrieve the AI generated action items to backend
+Send the action to frontend as JSON; at the same time store it in DB together with the link to audio speech file 
+(The fundamental function is done)
+
+Part 3
+Build a simple customer info query functions to know what actions should be carried out.
+(If possible, also make query history)
+
+Frontend
+A simple interface that allows to record a conversation
+An interface to query customer
