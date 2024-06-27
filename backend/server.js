@@ -2,9 +2,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import multer from "multer";
 import bodyParser from "body-parser";
 
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import {
   TranscribeClient,
   StartTranscriptionJobCommand,
@@ -36,37 +37,37 @@ const transcribeClient = new TranscribeClient({
 
 app.use(bodyParser.json());
 
-// Test POSTMAN
-app.get("/", (req, res) => {
-  res.send({ message: "Success" });
-});
+// Set up multer for file upload
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
-// API to store audio file to S3 bucket
-const fileKey = "foo.csv";
+// Store audio file to S3 bucket
+app.post("/api/store-audio-file", upload.single("audioFile"), async (req, res) => {
+  const file = req.file;
 
-const getS3Object = async (params) => {
+  if (!file) {
+    return res.status(400).send("No file uploaded.");
+  }
+
+  const params = {
+    Bucket: bucketName,
+    Key: file.originalname,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
+
   try {
-    const data = await s3Client.send(new GetObjectCommand(params));
-    const fileContent = await streamToString(data.Body);
-    console.log(fileContent);
+    const command = new PutObjectCommand(params);
+    await s3Client.send(command);
+    res.status(200).send("File uploaded successfully.");
   } catch (err) {
     console.error(err);
+    res.status(500).send("Error uploading file.");
   }
-};
-
-const streamToString = (stream) => {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    stream.on("data", (chunk) => chunks.push(chunk));
-    stream.on("error", reject);
-    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf-8")));
-  });
-};
-
-getS3Object({ Bucket: bucketName, Key: fileKey });
+});
 
 // Send a job from S3 to Transcribe and return the job to the original bucket
-app.post("/start-transcription", async (req, res) => {
+app.post("/api/transcribe-audio-file", async (req, res) => {
   const { audioFileName } = req.body;
   const audioFileUri = `s3://${process.env.S3_BUCKET_NAME}/${audioFileName}`;
 
