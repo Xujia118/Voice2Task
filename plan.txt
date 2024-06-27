@@ -5,6 +5,12 @@ Get audio file from frontend. This is temporarily skipped
 Access an audio speech file from S3 bucket
 Send this file to AWS Transcribe
 Set up Transcribe to send text output back to S3
+
+DB: 
+After the actions list is fetched, user proceeds to store the info on DB.
+We make it simple: get the user, store the summary.
+Problem: How to locate the audio file in S3?
+
 Fetch the text file at the backend (or directly send it to openAI if possible)
 
 Part 2
