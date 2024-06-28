@@ -5,7 +5,11 @@ import express from "express";
 import multer from "multer";
 import bodyParser from "body-parser";
 
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 import {
   TranscribeClient,
   StartTranscriptionJobCommand,
@@ -77,7 +81,10 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
 
   // Extract the original file name, add "-text" to the original file name for better readability
   // Ex: sampleOrder.m4 -> sampleOrder-text.json
-  const nameWithoutExtension = audioFileName.substring(0, audioFileName.lastIndexOf("."));
+  const nameWithoutExtension = audioFileName.substring(
+    0,
+    audioFileName.lastIndexOf(".")
+  );
   const textFileName = `${nameWithoutExtension}-text.json`;
 
   const transcribeParams = {
@@ -104,6 +111,44 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
     res.status(500).send("Error starting transcription job.");
   }
 });
+
+// Get the transcripts from the JSON file in S3
+app.get("/api/get-transcription", async (req, res) => {
+  const { fileName } = req.query;
+
+  if (!fileName) {
+    return res.status(400).send("Missing fileName query parameter.");
+  }
+
+  const params = {
+    Bucket: bucketName,
+    Key: fileName,
+  };
+
+  try {
+    const command = new GetObjectCommand(params);
+    const data = await s3Client.send(command);
+
+    const streamToString = (stream) =>
+      new Promise((resolve, reject) => {
+        const chunks = [];
+        stream.on("data", (chunk) => chunks.push(chunk));
+        stream.on("error", reject);
+        stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf-8")));
+      });
+
+    const fileContent = await streamToString(data.Body);
+    const jsonContent = JSON.parse(fileContent);
+    const transcripts = jsonContent.results.transcripts[0].transcript;
+    res.status(200).json(transcripts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error retrieving file.");
+  }
+});
+
+// Send the response from previous GET to AI for a summary of actions
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
