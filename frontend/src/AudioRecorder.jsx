@@ -1,3 +1,5 @@
+import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
+import { Box, Button, Stack } from "@mui/material";
 import { useRef, useState } from "react";
 
 const AudioRecorder = () => {
@@ -33,7 +35,6 @@ const AudioRecorder = () => {
         // Upload recorded audio to backend and then to S3
         uploadToS3(recordedBlob);
       };
-
 
       mediaRecorder.current.start();
     } catch (error) {
@@ -80,11 +81,27 @@ const AudioRecorder = () => {
   };
 
   return (
-    <div>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
       <audio controls src={recordedUrl} />
-      <button onClick={startRecording}>Start Recording</button>
-      <button onClick={stopRecording}>Stop Recording</button>
-    </div>
+      <Stack direction={"row"} spacing={2}>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: "red" }}
+          onClick={stopRecording}
+        >
+          <PhoneDisabled />
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: "green" }}
+          onClick={startRecording}
+        >
+          <PhoneForwarded />
+        </Button>
+      </Stack>
+    </Box>
   );
 };
 

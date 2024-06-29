@@ -52,7 +52,7 @@ function WorkBench() {
         <Box sx={{ flex: 1 }} >
           <ClientDetails sx={{ flex: 1 }} />
         </Box>
-        <Box sx={{ flex: 3 }} bgcolor={"skyblue"}>
+        <Box sx={{ flex: 3 }} >
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tabs
