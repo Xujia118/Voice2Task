@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import multer from "multer";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 // AWS imports
 import {
@@ -22,6 +23,7 @@ import Anthropic from "@anthropic-ai/sdk";
 const app = express();
 const port = 3000;
 app.use(express.json());
+app.use(cors());
 
 // AWS API key
 const accessKeyId = process.env.AWS_ACCESS_KEY;

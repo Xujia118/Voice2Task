@@ -49,7 +49,7 @@ function WorkBench() {
   return (
     <main>
       <Box sx={{ display: "flex" }}>
-        <Box sx={{ flex: 1 }} bgcolor={"coral"}>
+        <Box sx={{ flex: 1 }} >
           <ClientDetails sx={{ flex: 1 }} />
         </Box>
         <Box sx={{ flex: 3 }} bgcolor={"skyblue"}>
@@ -60,9 +60,9 @@ function WorkBench() {
                 onChange={handleChange}
                 aria-label="basic tabs example"
               >
-                <Tab label="Item One" {...a11yProps(0)} />
-                <Tab label="Item Two" {...a11yProps(1)} />
-                <Tab label="Item Three" {...a11yProps(2)} />
+                <Tab label="Phone Conversation" {...a11yProps(0)} />
+                <Tab label="Summary" {...a11yProps(1)} />
+                <Tab label="Client History" {...a11yProps(2)} />
               </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
