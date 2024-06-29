@@ -39,20 +39,21 @@ function a11yProps(index) {
   };
 }
 
-function WorkBench() {
+function WorkBench({ tab, summarizePhoneCall, switchTab }) {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    console.log(newValue)
   };
 
   return (
     <main>
       <Box sx={{ display: "flex" }}>
-        <Box sx={{ flex: 1 }} >
+        <Box sx={{ flex: 1 }}>
           <ClientDetails sx={{ flex: 1 }} />
         </Box>
-        <Box sx={{ flex: 3 }} >
+        <Box sx={{ flex: 3 }}>
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tabs
@@ -60,16 +61,20 @@ function WorkBench() {
                 onChange={handleChange}
                 aria-label="basic tabs example"
               >
-                <Tab label="Phone Conversation" {...a11yProps(0)} />
-                <Tab label="Summary" {...a11yProps(1)} />
-                <Tab label="Client History" {...a11yProps(2)} />
+                <Tab label="conversation" {...a11yProps(0)} />
+                <Tab label="summary" {...a11yProps(1)} />
+                <Tab label="logs" {...a11yProps(2)} />
               </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
-              <Conversation />
+              <Conversation
+                tab={tab}
+                summarizePhoneCall={summarizePhoneCall}
+                switchTab={switchTab}
+              />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-                <Summary />
+              <Summary />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
               <Query />

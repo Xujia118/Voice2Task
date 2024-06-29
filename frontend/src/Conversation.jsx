@@ -3,13 +3,17 @@ import AudioRecorder from "./AudioRecorder";
 
 import Box from "@mui/material/Box";
 
-function Conversation() {
+function Conversation({ tab, summarizePhoneCall, switchTab }) {
   return (
     <div>
       <Box sx={{ width: "100%", height: 400 }} bgcolor={"skyblue"}>
         Placeholder for real-time analysis
       </Box>
-      <AudioRecorder />
+      <AudioRecorder
+        tab={tab}
+        summarizePhoneCall={summarizePhoneCall}
+        switchTab={switchTab}
+      />
     </div>
   );
 }

@@ -1,8 +1,9 @@
-import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
-import { Box, Button, Stack } from "@mui/material";
 import { useRef, useState } from "react";
 
-const AudioRecorder = () => {
+import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
+import { Box, Button, Stack } from "@mui/material";
+
+const AudioRecorder = ({ tab, summarizePhoneCall, switchTab }) => {
   const [recordedUrl, setRecordedUrl] = useState("");
   const mediaStream = useRef(null);
   const mediaRecorder = useRef(null);
@@ -51,6 +52,13 @@ const AudioRecorder = () => {
         track.stop();
       });
     }
+
+    // Trigger the entire summary logic and set the tab to summary
+    summarizePhoneCall()
+    
+    // TODO: switch tab 
+    switchTab(1)
+    console.log(tab)
   };
 
   const uploadToS3 = async (blob) => {
