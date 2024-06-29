@@ -5,6 +5,7 @@ import express from "express";
 import multer from "multer";
 import bodyParser from "body-parser";
 
+// AWS imports
 import {
   S3Client,
   PutObjectCommand,
@@ -15,13 +16,25 @@ import {
   StartTranscriptionJobCommand,
 } from "@aws-sdk/client-transcribe";
 
+// Anthropic import
+import Anthropic from "@anthropic-ai/sdk";
+
 const app = express();
 const port = 3000;
+app.use(express.json());
 
+// AWS API key
 const accessKeyId = process.env.AWS_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_SECRET_KEY;
 const region = process.env.AWS_REGION;
 const bucketName = process.env.S3_BUCKET_NAME;
+
+// Anthropic API key
+const anthropicAcessKey = process.env.AHTHROPIC_SCRETE_KEY;
+
+const anthropic = new Anthropic({
+  apiKey: anthropicAcessKey,
+});
 
 const s3Client = new S3Client({
   region,
@@ -134,21 +147,42 @@ app.get("/api/get-transcription", async (req, res) => {
         const chunks = [];
         stream.on("data", (chunk) => chunks.push(chunk));
         stream.on("error", reject);
-        stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf-8")));
+        stream.on("end", () =>
+          resolve(Buffer.concat(chunks).toString("utf-8"))
+        );
       });
 
     const fileContent = await streamToString(data.Body);
     const jsonContent = JSON.parse(fileContent);
     const transcripts = jsonContent.results.transcripts[0].transcript;
-    res.status(200).json(transcripts);
+
+    // Send over to API
+    const msg = await anthropic.messages.create({
+      model: "claude-3-opus-20240229",
+      max_tokens: 1000,
+      temperature: 0,
+      system: "Based on the phone call conversaion, give me a summary and a list of actions to do",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: transcripts,
+            },
+          ],
+        },
+      ],
+    });
+
+    const summary = msg.content[0].text;
+    console.log(summary);
+    res.status(200).json(summary);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving file.");
   }
 });
-
-// Send the response from previous GET to AI for a summary of actions
-
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
