@@ -128,7 +128,7 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
 });
 
 // Get AI summary
-app.get("/api/get-transcription", async (req, res) => {
+app.get("/api/get-summary", async (req, res) => {
   // Get the transcripts from the JSON file in S3
   const { fileName } = req.query;
 
