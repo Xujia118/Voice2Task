@@ -125,8 +125,9 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
   }
 });
 
-// Get the transcripts from the JSON file in S3
+// Get AI summary
 app.get("/api/get-transcription", async (req, res) => {
+  // Get the transcripts from the JSON file in S3
   const { fileName } = req.query;
 
   if (!fileName) {
@@ -156,12 +157,12 @@ app.get("/api/get-transcription", async (req, res) => {
     const jsonContent = JSON.parse(fileContent);
     const transcripts = jsonContent.results.transcripts[0].transcript;
 
-    // Send over to API
+    // Send over to AI(Claude) to generate summary
     const msg = await anthropic.messages.create({
       model: "claude-3-opus-20240229",
       max_tokens: 1000,
       temperature: 0,
-      system: "Based on the phone call conversaion, give me a summary and a list of actions to do",
+      system: "Based on the phone call conversaion, make a summary and a list of actions to do",
       messages: [
         {
           role: "user",

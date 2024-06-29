@@ -1,8 +1,11 @@
 import React from 'react'
+import AudioRecorder from './AudioRecorder'
 
 function Conversation() {
   return (
-    <div>Conversation</div>
+    <div>
+      <AudioRecorder />
+    </div>
   )
 }
 
