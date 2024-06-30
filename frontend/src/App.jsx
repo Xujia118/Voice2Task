@@ -23,10 +23,11 @@ function App() {
 
   const summarizePhoneCall = async (fileName) => {
     try {
-      console.log('file name at app.jsx', fileName)
-
-      await isAudioIsUploaded(fileName);
       await isTranscriptionComplete(fileName);
+
+      // Wait three seconds to process summary
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
       const summaryData = await fetchSummary(fileName);
       dispatch({ type: ACTIONS.SUMMARIZE, payload: summaryData.summary });
     } catch (err) {
@@ -35,18 +36,17 @@ function App() {
   };
 
   // All service call take some time, so give retries with delay
-  const isAudioIsUploaded = async (
-    fileName,
-    maxAttempts = 3,
-    delay = 2000
-  ) => {
+  const isAudioIsUploaded = async (fileName, maxAttempts = 2, delay = 2000) => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        await storeAudioToS3(fileName);
-        console.log("attempts:", attempt)
+        const testpromise = await storeAudioToS3(fileName);
+
+        console.log("test promise:", testpromise);
+
+        console.log("attempts:", attempt);
         return true;
       } catch (error) {
-        console.error(`Attempt ${attempt + 1} failed:`, error);
+        console.error(`Attempt to upload ${attempt + 1} failed:`, error);
         if (attempt < maxAttempts - 1) {
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
@@ -65,7 +65,7 @@ function App() {
         await transcribeAudioToText(fileName);
         return true;
       } catch (error) {
-        console.error(`Attempt ${attempt + 1} failed:`, error);
+        console.error(`Attempt to trancribe ${attempt + 1} failed:`, error);
         if (attempt < maxAttempts - 1) {
           await new Promise((resolve) => setTimeout(resolve, delay));
         }

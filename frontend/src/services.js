@@ -15,7 +15,6 @@ function chainPromise(promise) {
 export function storeAudioToS3(file) {
   const formData = new FormData();
   formData.append("audioFile", file);
-
   const fetched = fetch(`${API_BASE_URL}/api/store-audio-file`, {
     method: "POST",
     body: formData,
@@ -43,6 +42,9 @@ export function fetchSummary(fileName) {
 
   const url = new URL(`${API_BASE_URL}/api/get-summary`);
   url.searchParams.append("fileName", fileName);
+
+  console.log("url:", url)
+  console.log("search params:", url.searchParams)
 
   const fetched = fetch(url);
   return chainPromise(fetched);

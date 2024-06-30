@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from "express";
 import multer from "multer";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 import cors from "cors";
 
 // AWS imports
@@ -22,6 +22,7 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const app = express();
 const port = 3000;
+// app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
 
@@ -54,7 +55,6 @@ const transcribeClient = new TranscribeClient({
   },
 });
 
-app.use(bodyParser.json());
 
 // Set up multer for file upload
 const storage = multer.memoryStorage();
@@ -66,8 +66,8 @@ app.post(
   upload.single("audioFile"),
   async (req, res) => {
     const file = req.file;
-
-    console.log("loaded file", file)  
+   
+    console.log("loaded file", file)     
 
     if (!file) {
       return res.status(400).send("No file uploaded.");
@@ -90,7 +90,7 @@ app.post(
     }
   }
 );
-    
+      
 // Send a job from S3 to Transcribe and return the job to the original bucket
 app.post("/api/transcribe-audio-file", async (req, res) => {
   const { audioFileName } = req.body;
@@ -98,11 +98,11 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
 
   // Extract the original file name, add "-text" to the original file name for better readability
   // Ex: sampleOrder.m4 -> sampleOrder-text.json
-  const nameWithoutExtension = audioFileName.substring(
-    0,
-    audioFileName.lastIndexOf(".")
-  );
-  const textFileName = `${nameWithoutExtension}-text.json`;
+  // const nameWithoutExtension = audioFileName.substring(
+  //   0,
+  //   audioFileName.lastIndexOf(".")
+  // );
+  // const textFileName = `${nameWithoutExtension}-text.json`;
 
   const transcribeParams = {
     TranscriptionJobName: `TranscriptionJob-${Date.now()}`,
@@ -111,7 +111,7 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
       MediaFileUri: audioFileUri,
     },
     OutputBucketName: process.env.S3_BUCKET_NAME,
-    OutputKey: textFileName,
+    OutputKey: audioFileName,
   };
 
   try {
@@ -133,6 +133,11 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
 app.get("/api/get-summary", async (req, res) => {
   // Get the transcripts from the JSON file in S3
   const { fileName } = req.query;
+
+  // Convert file name, replace .mp4 with .json
+  const jsonFileName = fileName.replace('.mp3', '.json') 
+  
+  console.log("get summary:", jsonFileName);
 
   if (!fileName) {
     return res.status(400).send("Missing fileName query parameter.");

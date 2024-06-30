@@ -4,6 +4,7 @@ import { ACTIONS } from "./constants";
 
 import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
 import { Box, Button, Stack } from "@mui/material";
+import { storeAudioToS3 } from "./services";
 
 const AudioRecorder = ({ tab, fileName, summarizePhoneCall, switchTab, dispatch }) => {
   const currentFileName = useRef(fileName);
@@ -15,7 +16,8 @@ const AudioRecorder = ({ tab, fileName, summarizePhoneCall, switchTab, dispatch 
 
   const startRecording = async () => {
     try {
-      const newFileName = `phone-audio-${Date.now()}.mp3`;
+      // const newFileName = `phone-audio-${Date.now()}.mp3`;
+      const newFileName = 'phone-audio.mp3';
       currentFileName.current = newFileName;
       dispatch({ type: ACTIONS.SET_FILE_NAME, payload: newFileName });
 
@@ -70,9 +72,6 @@ const AudioRecorder = ({ tab, fileName, summarizePhoneCall, switchTab, dispatch 
   const uploadToS3 = async (blob, newFileName) => {
     try {
       const formData = new FormData();
-
-      console.log("file name:", newFileName);
-
       formData.append("audioFile", blob, newFileName);
 
       const response = await fetch(
@@ -85,7 +84,6 @@ const AudioRecorder = ({ tab, fileName, summarizePhoneCall, switchTab, dispatch 
 
       if (response.ok) {
         console.log("File uploaded successfully to backend.");
-
         // Optionally handle response from backend if needed
       } else {
         console.error("Failed to upload file to backend:", response.statusText);
