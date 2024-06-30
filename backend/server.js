@@ -3,8 +3,10 @@ dotenv.config();
 
 import express from "express";
 import multer from "multer";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
+import cors from "cors";
 
+// AWS imports
 import {
   S3Client,
   PutObjectCommand,
@@ -15,13 +17,27 @@ import {
   StartTranscriptionJobCommand,
 } from "@aws-sdk/client-transcribe";
 
+// Anthropic import
+import Anthropic from "@anthropic-ai/sdk";
+
 const app = express();
 const port = 3000;
+// app.use(bodyParser.json());
+app.use(express.json());
+app.use(cors());
 
+// AWS API key
 const accessKeyId = process.env.AWS_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_SECRET_KEY;
 const region = process.env.AWS_REGION;
 const bucketName = process.env.S3_BUCKET_NAME;
+
+// Anthropic API key
+const anthropicAcessKey = process.env.AHTHROPIC_SCRETE_KEY;
+
+const anthropic = new Anthropic({
+  apiKey: anthropicAcessKey,
+});
 
 const s3Client = new S3Client({
   region,
@@ -39,7 +55,6 @@ const transcribeClient = new TranscribeClient({
   },
 });
 
-app.use(bodyParser.json());
 
 // Set up multer for file upload
 const storage = multer.memoryStorage();
@@ -51,6 +66,8 @@ app.post(
   upload.single("audioFile"),
   async (req, res) => {
     const file = req.file;
+   
+    console.log("loaded file", file)     
 
     if (!file) {
       return res.status(400).send("No file uploaded.");
@@ -66,14 +83,14 @@ app.post(
     try {
       const command = new PutObjectCommand(params);
       await s3Client.send(command);
-      res.status(200).send("File uploaded successfully.");
+      res.status(200).json({ message: "File uploaded successfully." });
     } catch (err) {
       console.error(err);
-      res.status(500).send("Error uploading file.");
+      res.status(500).json({ message: "Error uploading file." });
     }
   }
 );
-
+      
 // Send a job from S3 to Transcribe and return the job to the original bucket
 app.post("/api/transcribe-audio-file", async (req, res) => {
   const { audioFileName } = req.body;
@@ -81,11 +98,11 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
 
   // Extract the original file name, add "-text" to the original file name for better readability
   // Ex: sampleOrder.m4 -> sampleOrder-text.json
-  const nameWithoutExtension = audioFileName.substring(
-    0,
-    audioFileName.lastIndexOf(".")
-  );
-  const textFileName = `${nameWithoutExtension}-text.json`;
+  // const nameWithoutExtension = audioFileName.substring(
+  //   0,
+  //   audioFileName.lastIndexOf(".")
+  // );
+  // const textFileName = `${nameWithoutExtension}-text.json`;
 
   const transcribeParams = {
     TranscriptionJobName: `TranscriptionJob-${Date.now()}`,
@@ -94,7 +111,7 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
       MediaFileUri: audioFileUri,
     },
     OutputBucketName: process.env.S3_BUCKET_NAME,
-    OutputKey: textFileName,
+    OutputKey: audioFileName,
   };
 
   try {
@@ -111,10 +128,16 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
     res.status(500).send("Error starting transcription job.");
   }
 });
-
-// Get the transcripts from the JSON file in S3
-app.get("/api/get-transcription", async (req, res) => {
+  
+// Get AI summary
+app.get("/api/get-summary", async (req, res) => {
+  // Get the transcripts from the JSON file in S3
   const { fileName } = req.query;
+
+  // Convert file name, replace .mp4 with .json
+  const jsonFileName = fileName.replace('.mp3', '.json') 
+  
+  console.log("get summary:", jsonFileName);
 
   if (!fileName) {
     return res.status(400).send("Missing fileName query parameter.");
@@ -134,21 +157,43 @@ app.get("/api/get-transcription", async (req, res) => {
         const chunks = [];
         stream.on("data", (chunk) => chunks.push(chunk));
         stream.on("error", reject);
-        stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf-8")));
+        stream.on("end", () =>
+          resolve(Buffer.concat(chunks).toString("utf-8"))
+        );
       });
 
     const fileContent = await streamToString(data.Body);
     const jsonContent = JSON.parse(fileContent);
     const transcripts = jsonContent.results.transcripts[0].transcript;
-    res.status(200).json(transcripts);
+
+    // Send over to AI(Claude) to generate summary
+    const msg = await anthropic.messages.create({
+      model: "claude-3-opus-20240229",
+      max_tokens: 1000,
+      temperature: 0,
+      system:
+        "Based on the phone call conversaion, make a summary and a list of actions to do",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: transcripts,
+            },
+          ],
+        },
+      ],
+    });
+
+    const summary = msg.content[0].text;
+    console.log(summary);
+    res.status(200).json({ summary });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving file.");
   }
 });
-
-// Send the response from previous GET to AI for a summary of actions
-
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

@@ -1,8 +1,8 @@
 import React from 'react'
 
-function Summary() {
+function Summary({ summary }) {
   return (
-    <div>Summary</div>
+    <div>{summary}</div>
   )
 }
 

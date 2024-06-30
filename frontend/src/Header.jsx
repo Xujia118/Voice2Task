@@ -174,7 +174,7 @@ return (
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            MUI
+            Voice2Task
           </Typography>
           <Search>
             <SearchIconWrapper>
