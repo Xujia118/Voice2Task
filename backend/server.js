@@ -67,6 +67,8 @@ app.post(
   async (req, res) => {
     const file = req.file;
 
+    console.log("loaded file", file)  
+
     if (!file) {
       return res.status(400).send("No file uploaded.");
     }
@@ -81,14 +83,14 @@ app.post(
     try {
       const command = new PutObjectCommand(params);
       await s3Client.send(command);
-      res.status(200).send("File uploaded successfully.");
+      res.status(200).json({ message: "File uploaded successfully." });
     } catch (err) {
       console.error(err);
-      res.status(500).send("Error uploading file.");
+      res.status(500).json({ message: "Error uploading file." });
     }
   }
 );
-
+    
 // Send a job from S3 to Transcribe and return the job to the original bucket
 app.post("/api/transcribe-audio-file", async (req, res) => {
   const { audioFileName } = req.body;
@@ -126,7 +128,7 @@ app.post("/api/transcribe-audio-file", async (req, res) => {
     res.status(500).send("Error starting transcription job.");
   }
 });
-
+  
 // Get AI summary
 app.get("/api/get-summary", async (req, res) => {
   // Get the transcripts from the JSON file in S3
@@ -164,7 +166,8 @@ app.get("/api/get-summary", async (req, res) => {
       model: "claude-3-opus-20240229",
       max_tokens: 1000,
       temperature: 0,
-      system: "Based on the phone call conversaion, make a summary and a list of actions to do",
+      system:
+        "Based on the phone call conversaion, make a summary and a list of actions to do",
       messages: [
         {
           role: "user",
@@ -180,7 +183,7 @@ app.get("/api/get-summary", async (req, res) => {
 
     const summary = msg.content[0].text;
     console.log(summary);
-    res.status(200).json(summary);
+    res.status(200).json({ summary });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving file.");

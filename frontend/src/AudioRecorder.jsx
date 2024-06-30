@@ -1,9 +1,13 @@
 import { useRef, useState } from "react";
 
+import { ACTIONS } from "./constants";
+
 import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
 import { Box, Button, Stack } from "@mui/material";
 
-const AudioRecorder = ({ tab, summarizePhoneCall, switchTab }) => {
+const AudioRecorder = ({ tab, fileName, summarizePhoneCall, switchTab, dispatch }) => {
+  const currentFileName = useRef(fileName);
+  
   const [recordedUrl, setRecordedUrl] = useState("");
   const mediaStream = useRef(null);
   const mediaRecorder = useRef(null);
@@ -11,6 +15,10 @@ const AudioRecorder = ({ tab, summarizePhoneCall, switchTab }) => {
 
   const startRecording = async () => {
     try {
+      const newFileName = `phone-audio-${Date.now()}.mp3`;
+      currentFileName.current = newFileName;
+      dispatch({ type: ACTIONS.SET_FILE_NAME, payload: newFileName });
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaStream.current = stream;
       mediaRecorder.current = new MediaRecorder(stream);
@@ -34,9 +42,8 @@ const AudioRecorder = ({ tab, summarizePhoneCall, switchTab }) => {
         chunks.current = [];
 
         // Upload recorded audio to backend and then to S3
-        uploadToS3(recordedBlob);
+        uploadToS3(recordedBlob, currentFileName.current);
       };
-
       mediaRecorder.current.start();
     } catch (error) {
       console.error("Error accessing microphone:", error);
@@ -54,17 +61,19 @@ const AudioRecorder = ({ tab, summarizePhoneCall, switchTab }) => {
     }
 
     // Trigger the entire summary logic and set the tab to summary
-    summarizePhoneCall()
+    summarizePhoneCall(currentFileName.current);
     
     // TODO: switch tab 
     switchTab(1)
-    console.log(tab)
   };
 
-  const uploadToS3 = async (blob) => {
+  const uploadToS3 = async (blob, newFileName) => {
     try {
       const formData = new FormData();
-      formData.append("audioFile", blob, "recorded-audio.mp3");
+
+      console.log("file name:", newFileName);
+
+      formData.append("audioFile", blob, newFileName);
 
       const response = await fetch(
         "http://localhost:3000/api/store-audio-file",

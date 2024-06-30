@@ -39,12 +39,11 @@ function a11yProps(index) {
   };
 }
 
-function WorkBench({ tab, summarizePhoneCall, switchTab }) {
+function WorkBench({ tab, switchTab, fileName, summarizePhoneCall, summary, dispatch }) {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    console.log(newValue)
   };
 
   return (
@@ -68,13 +67,15 @@ function WorkBench({ tab, summarizePhoneCall, switchTab }) {
             </Box>
             <CustomTabPanel value={value} index={0}>
               <Conversation
+                dispatch={dispatch}
                 tab={tab}
+                fileName={fileName}
                 summarizePhoneCall={summarizePhoneCall}
                 switchTab={switchTab}
               />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-              <Summary />
+              <Summary summary={summary} />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
               <Query />

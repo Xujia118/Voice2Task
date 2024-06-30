@@ -37,11 +37,11 @@ export function transcribeAudioToText(audioFileName) {
 }
 
 // Get summary
-export function fetchSummary() {
+export function fetchSummary(fileName) {
 //   const fetched = fetch(`${BACKEND_URL}/api/get-summary`);
 //   return chainPromise(fetched);
 
-  const url = new URL(`${BACKEND_URL}/api/get-summary`);
+  const url = new URL(`${API_BASE_URL}/api/get-summary`);
   url.searchParams.append("fileName", fileName);
 
   const fetched = fetch(url);
