@@ -1,8 +1,12 @@
 import React from 'react'
+import { Button } from '@mui/material'
 
 function Query() {
+
   return (
-    <div>Query</div>
+    <div>
+      <Button variant='contained'>View client history</Button>
+    </div>
   )
 }
 
