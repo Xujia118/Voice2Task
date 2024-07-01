@@ -5,6 +5,8 @@ import express from "express";
 import multer from "multer";
 // import bodyParser from "body-parser";
 import cors from "cors";
+import mysql from "mysql2/promise";
+
 
 // AWS imports
 import {
@@ -25,6 +27,14 @@ const port = 3000;
 // app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
+
+//MySQL connection 
+const db = await mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+})
 
 // AWS API key
 const accessKeyId = process.env.AWS_ACCESS_KEY;
@@ -60,11 +70,30 @@ const transcribeClient = new TranscribeClient({
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+
+//
+// const uploadToS3 = async (file) => {
+//   const params = {
+//     Bucket: bucketName,
+//     Key: file.originalname,
+//     Body: file.buffer,
+//     ContentType: file.mimetype,
+//   };
+
+//   try {
+//     const command = new PutObjectCommand(params);
+//     await s3Client.send(command);
+
+//     const videoUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${file.originalname}`;
+//     return videoUrl;
+//   } catch (err) {
+//     console.error("Error uploading to S3:", err);
+//     throw err; // Rethrow the error to handle it in the calling function
+//   }
+// };
+
 // Store audio file to S3 bucket
-app.post(
-  "/api/store-audio-file",
-  upload.single("audioFile"),
-  async (req, res) => {
+app.post("/api/store-audio-file", upload.single("audioFile"), async (req, res) => {
     const file = req.file;
    
     console.log("loaded file", file)     
@@ -83,13 +112,48 @@ app.post(
     try {
       const command = new PutObjectCommand(params);
       await s3Client.send(command);
-      res.status(200).json({ message: "File uploaded successfully." });
+
+      //upload video to s3 bucket
+      const videoUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${file.originalname}`;
+      res.status(200).json({ message: "Video uploaded successfully.", videoUrl });
+      
+      // const videoUrl = await uploadToS3(file);
+      // res.status(200).json({ message: "Video uploaded successfully.", videoUrl });
+      // req.videoUrl = videoUrl; 
+      // next();
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: "Error uploading file." });
+      res.status(500).json({ message: "Error uploading video." });
     }
+});
+
+
+
+// Store user info to RDS
+app.post("/api/store-user-info", async (req, res) => {
+  const { name, phoneNumber, s3Url} = req.body
+
+  try {
+    const [existingRows] = await db.execute("SELECT * FROM Users WHERE username = ? AND phone_number = ?", [name, phoneNumber]);
+
+    if (existingRows.length > 0) {
+      const existingUser = existingRows[0];
+      const updatedS3Urls = existingUser.s3_urls ? `${existingUser.s3_urls}, ${s3Url}` : s3Url;
+
+      await db.execute("UPDATE Users SET s3_urls = ? WHERE username = ? AND phone_number = ?", [updatedS3Urls, name, phoneNumber]);
+
+      res.status(200).json({ message: "S3 URL appended to user record successfully." });
+    } else {
+      await db.execute("INSERT INTO Users (username, phone_number, s3_urls) VALUES (?, ?, ?)", [name, phoneNumber, s3Url]);
+      res.status(200).json({ message: "New user created with S3 URL successfully." });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error storing or updating user information." });
   }
-);
+});
+
+
       
 // Send a job from S3 to Transcribe and return the job to the original bucket
 app.post("/api/transcribe-audio-file", async (req, res) => {
@@ -188,10 +252,35 @@ app.get("/api/get-summary", async (req, res) => {
 
     const summary = msg.content[0].text;
     console.log(summary);
+    //here 
     res.status(200).json({ summary });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving file.");
+  }
+});
+
+//post summary file to tables 
+app.post("/api/store-user-summary", async (req, res) => {
+  const { name, phoneNumber, summary } = req.body;
+
+  try {
+    const [existingRows] = await db.execute("SELECT * FROM Users WHERE username = ? AND phone_number = ?", [name, phoneNumber]);
+
+    if (existingRows.length > 0) {
+      const existingUser = existingRows[0];
+      const updatedFiles = existingUser.summary_files ? `${existingUser.summary_files}, ${summary}` : summary;
+
+      await db.execute("UPDATE Users SET summary_files = ? WHERE username = ? AND phone_number = ?", [updatedFiles, name, phoneNumber]);
+
+      res.status(200).json({ message: "add summary to users table successfully." });
+    } else {
+      await db.execute("INSERT INTO Users (username, phone_number, summary_files) VALUES (?, ?, ?)", [name, phoneNumber, summary]);
+      res.status(200).json({ message: "New user created with sumary successfully." });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error storing or updating user information." });
   }
 });
 

@@ -57,8 +57,8 @@ function App() {
 
   const isTranscriptionComplete = async (
     fileName,
-    maxAttempts = 2,
-    delay = 5000
+    maxAttempts = 6,
+    delay = 10000
   ) => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {

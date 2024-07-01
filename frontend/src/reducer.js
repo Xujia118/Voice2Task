@@ -27,6 +27,12 @@ export function reducer(state, action) {
         ...state,
       };
 
+    case ACTIONS.SUMMARIZE:
+      return {
+        ...state,
+        summary: action.payload
+      }
+
     default:
       return state;
   }
