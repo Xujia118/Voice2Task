@@ -1,12 +1,14 @@
 import { useState } from "react";
 
+import { ACTIONS } from "./constants";
+
 import { Button, Divider, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 
 const clientDetails = ["Name", "Phone", "Email", "Address"];
 
-function ClientDetails() {
-  const [clientData, setClientData] = useState({
+function ClientDetails({ dispatch, clientData, onFetchClientData }) {
+  const [localClientData, setLocalClientData] = useState({
     Name: "",
     Phone: "",
     Email: "",
@@ -15,8 +17,8 @@ function ClientDetails() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setClientData({
-      ...clientData,
+    setLocalClientData({
+      ...localClientData,
       [name]: value,
     });
   };
@@ -25,10 +27,13 @@ function ClientDetails() {
     e.preventDefault();
 
     // send the client data object to backend for query
-    console.log(clientData);
+    console.log(localClientData);
+    onFetchClientData(localClientData);
+
+    dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: localClientData });
 
     // Clear form at submit
-    setClientData({
+    setLocalClientData({
       Name: "",
       Phone: "",
       Email: "",

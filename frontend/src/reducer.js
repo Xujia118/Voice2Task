@@ -1,11 +1,12 @@
-import { TABS, ACTIONS } from "./constants";
+import { ACTIONS } from "./constants";
 
 export const initialState = {
-  //   tab: TABS.CONVERSATION,
   tab: 0,
   fileName: "",
   loading_summary: false,
-  summary: "",
+  newSummary: "",
+  allSummaries: [], // singleit out although it's part of clientData obj as client data obj might change
+  clientData: {},
 };
 
 export function reducer(state, action) {
@@ -15,12 +16,12 @@ export function reducer(state, action) {
         ...state,
         tab: action.payload,
       };
-     
-    case ACTIONS.SET_FILE_NAME: 
+
+    case ACTIONS.SET_FILE_NAME:
       return {
         ...state,
         fileName: action.payload,
-      }
+      };
 
     case ACTIONS.PICKUP_PHONE:
       return {
@@ -30,8 +31,15 @@ export function reducer(state, action) {
     case ACTIONS.SUMMARIZE:
       return {
         ...state,
-        summary: action.payload
-      }
+        newSummary: action.payload,
+      };
+
+    case ACTIONS.FETCH_CLIENT_DATA:
+      return {
+        ...state,
+        clientData: action.payload,
+        allSummaries: action.payload, // To add .summaries 
+      };
 
     default:
       return state;
