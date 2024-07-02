@@ -39,7 +39,17 @@ function a11yProps(index) {
   };
 }
 
-function WorkBench({ tab, switchTab, fileName, summarizePhoneCall, summary, dispatch }) {
+function WorkBench({
+  tab,
+  switchTab,
+  fileName,
+  summarizePhoneCall,
+  summary,
+  allSummaries,
+  dispatch,
+  clientData,
+  onFetchClientData,
+}) {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -50,7 +60,12 @@ function WorkBench({ tab, switchTab, fileName, summarizePhoneCall, summary, disp
     <main>
       <Box sx={{ display: "flex" }}>
         <Box sx={{ flex: 1 }}>
-          <ClientDetails sx={{ flex: 1 }} />
+          <ClientDetails
+            sx={{ flex: 1 }}
+            dispatch={dispatch}
+            clientData={clientData}
+            onFetchClientData={onFetchClientData}
+          />
         </Box>
         <Box sx={{ flex: 3 }}>
           <Box sx={{ width: "100%" }}>
@@ -75,10 +90,17 @@ function WorkBench({ tab, switchTab, fileName, summarizePhoneCall, summary, disp
               />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-              <Summary summary={summary} />
+              <Summary
+                summary={summary}
+                onFetchClientData={onFetchClientData}
+              />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
-              <Query />
+              <Query
+                allSummaries={allSummaries}
+                clientData={clientData}
+                onFetchClientData={onFetchClientData}
+              />
             </CustomTabPanel>
           </Box>
         </Box>

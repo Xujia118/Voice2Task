@@ -1,10 +1,15 @@
 import { Button } from "@mui/material";
-import React from "react";
 
-function Summary({ summary }) {
+function Summary({ summary, onFetchClientData }) {
+  const handleConfirm = async () => {
+    onFetchClientData(summary); // Might need to write a separate api to insert summary
+  };
+
   return (
     <>
-      <Button variant="contained">Confirm</Button>
+      <Button variant="contained" onClick={handleConfirm}>
+        Confirm
+      </Button>
       <div>{summary}</div>
     </>
   );

@@ -1,22 +1,22 @@
 import { useState } from "react";
 
+import { ACTIONS } from "./constants";
+
 import { Button, Divider, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 
 const clientDetails = ["Name", "Phone", "Email", "Address"];
 
-function ClientDetails() {
-  const [clientData, setClientData] = useState({
-    Name: "",
-    Phone: "",
-    Email: "",
-    Address: "",
+function ClientDetails({ dispatch, clientData, onFetchClientData }) {
+  const [localClientData, setLocalClientData] = useState({
+    name: "",
+    phoneNumber: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setClientData({
-      ...clientData,
+    setLocalClientData({
+      ...localClientData,
       [name]: value,
     });
   };
@@ -25,14 +25,15 @@ function ClientDetails() {
     e.preventDefault();
 
     // send the client data object to backend for query
-    console.log(clientData);
+    console.log(localClientData);
+    onFetchClientData(localClientData);
+
+    dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: localClientData });
 
     // Clear form at submit
-    setClientData({
-      Name: "",
-      Phone: "",
-      Email: "",
-      Address: "",
+    setLocalClientData({
+      name: "",
+      phoneNumber: "",
     });
   };
 
@@ -41,7 +42,11 @@ function ClientDetails() {
       <Typography variant="h6" p={1} sx={{ textAlign: "center" }}>
         Placerholder
       </Typography>
-      <Box height={250}>Client info display placeholder</Box>
+      <Box height={250}>
+        {Object.keys(clientData).map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </Box>
       <Divider />
       <Box>
         <form onSubmit={handleSubmit}>
@@ -58,7 +63,7 @@ function ClientDetails() {
                 name={detail}
                 id={detail}
                 label={detail}
-                value={clientData[detail]}
+                // value={clientData[detail]}
                 onChange={handleChange}
               ></TextField>
             </Box>

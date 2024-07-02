@@ -50,6 +50,8 @@ export function fetchSummary(fileName) {
   return chainPromise(fetched);
 }
 
+// Append summary to client Data
+
 // Get/Post/Patch client data
 export function fetchClientData(clientObj) {
   const fetched = fetch(`${API_BASE_URL}/api/user-data`, {

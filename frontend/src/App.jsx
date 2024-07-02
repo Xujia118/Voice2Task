@@ -1,12 +1,13 @@
-import React, { useReducer } from "react";
+import { useReducer } from "react";
 
 import { initialState, reducer } from "./reducer";
-import { TABS, ACTIONS } from "./constants";
+import { ACTIONS } from "./constants";
 
 import WorkBench from "./WorkBench";
 import Header from "./Header";
 
 import {
+  fetchClientData,
   fetchSummary,
   storeAudioToS3,
   transcribeAudioToText,
@@ -74,6 +75,15 @@ function App() {
     return false;
   };
 
+  const onFetchClientData = async (clientObj) => {
+    try {
+      const data = await fetchClientData(clientObj);
+      dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
   return (
     <>
       <Header />
@@ -83,7 +93,10 @@ function App() {
         switchTab={switchTab}
         fileName={state.fileName}
         summarizePhoneCall={summarizePhoneCall}
-        summary={state.summary}
+        summary={state.newSmmary}
+        allSummaries={state.allSummaries}
+        clientData={state.clientData}
+        onFetchClientData={onFetchClientData}
       />
     </>
   );
