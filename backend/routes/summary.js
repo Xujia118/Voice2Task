@@ -55,7 +55,7 @@ const upload = multer({ storage: storage });
 
 // Store audio file to S3 bucket
 router.post(
-  "/api/store-audio-file",
+  "/store-audio-file",
   upload.single("audioFile"),
   async (req, res) => {
     const file = req.file;
@@ -95,7 +95,7 @@ router.post(
 );
 
 // Store user info to RDS
-router.post("/api/store-user-info", async (req, res) => {
+router.post("/store-user-info", async (req, res) => {
   const { name, phoneNumber, s3Url } = req.body;
 
   try {
@@ -136,7 +136,7 @@ router.post("/api/store-user-info", async (req, res) => {
 });
 
 // Send a job from S3 to Transcribe and return the job to the original bucket
-router.post("/api/transcribe-audio-file", async (req, res) => {
+router.post("/transcribe-audio-file", async (req, res) => {
   const { audioFileName } = req.body;
   const audioFileUri = `s3://${process.env.S3_BUCKET_NAME}/${audioFileName}`;
   const transcribeParams = {
@@ -165,7 +165,7 @@ router.post("/api/transcribe-audio-file", async (req, res) => {
 });
 
 // Get AI summary
-router.get("/api/get-summary", async (req, res) => {
+router.get("/get-summary", async (req, res) => {
   // Get the transcripts from the JSON file in S3
   const { fileName } = req.query;
 

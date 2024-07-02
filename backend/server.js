@@ -10,10 +10,11 @@ app.use(cors());
 
 // Summary routes
 import summaryRouter from "./routes/summary.js";
-app.use("/", summaryRouter)
+app.use("/api", summaryRouter)
 
 // Queries routes
-// import queryRouter from "./routes/queries.js"
+import queryRouter from "./routes/queries.js"
+app.use("/api", queryRouter)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
