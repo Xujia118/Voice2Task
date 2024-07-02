@@ -1,10 +1,15 @@
-import React from "react";
 import { Button } from "@mui/material";
+import { useEffect } from "react";
 
-function Query({ allSummaries }) {
+function Query({ allSummaries, clientData, onFetchClientData }) {
   if (!allSummaries) {
-    return <p>No summaries</p>;
+    return <p>No records</p>;
   }
+
+  // Every time this tab is loaded, update client state to get summary list
+  useEffect(() => {
+    onFetchClientData(clientData);
+  }, []);
 
   return (
     <div>

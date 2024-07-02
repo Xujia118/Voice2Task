@@ -9,10 +9,8 @@ const clientDetails = ["Name", "Phone", "Email", "Address"];
 
 function ClientDetails({ dispatch, clientData, onFetchClientData }) {
   const [localClientData, setLocalClientData] = useState({
-    Name: "",
-    Phone: "",
-    Email: "",
-    Address: "",
+    name: "",
+    phoneNumber: "",
   });
 
   const handleChange = (e) => {
@@ -34,10 +32,8 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
 
     // Clear form at submit
     setLocalClientData({
-      Name: "",
-      Phone: "",
-      Email: "",
-      Address: "",
+      name: "",
+      phoneNumber: "",
     });
   };
 
@@ -46,7 +42,11 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
       <Typography variant="h6" p={1} sx={{ textAlign: "center" }}>
         Placerholder
       </Typography>
-      <Box height={250}>Client info display placeholder</Box>
+      <Box height={250}>
+        {Object.keys(clientData).map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </Box>
       <Divider />
       <Box>
         <form onSubmit={handleSubmit}>
@@ -63,7 +63,7 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
                 name={detail}
                 id={detail}
                 label={detail}
-                value={clientData[detail]}
+                // value={clientData[detail]}
                 onChange={handleChange}
               ></TextField>
             </Box>

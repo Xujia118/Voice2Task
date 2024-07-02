@@ -90,10 +90,17 @@ function WorkBench({
               />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-              <Summary summary={summary} />
+              <Summary
+                summary={summary}
+                onFetchClientData={onFetchClientData}
+              />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
-              <Query allSummaries={allSummaries} />
+              <Query
+                allSummaries={allSummaries}
+                clientData={clientData}
+                onFetchClientData={onFetchClientData}
+              />
             </CustomTabPanel>
           </Box>
         </Box>
