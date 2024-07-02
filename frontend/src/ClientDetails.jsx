@@ -1,67 +1,72 @@
-import * as React from "react";
+import { useState } from "react";
 
-import { Typography } from "@mui/material";
+import { Button, Divider, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import {
-  AccountBox,
-  AlternateEmail as Email,
-  Home,
-  Phone,
-} from "@mui/icons-material";
+
+const clientDetails = ["Name", "Phone", "Email", "Address"];
 
 function ClientDetails() {
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [clientData, setClientData] = useState({
+    Name: "",
+    Phone: "",
+    Email: "",
+    Address: "",
+  });
 
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setClientData({
+      ...clientData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // send the client data object to backend for query
+    console.log(clientData);
+
+    // Clear form at submit
+    setClientData({
+      Name: "",
+      Phone: "",
+      Email: "",
+      Address: "",
+    });
   };
 
   return (
     <>
-      <Typography variant="h6" p={1} sx={{ textAlign: "center"}}>Client Name</Typography>
-      <Box sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-        <List component="nav" aria-label="main mailbox folders">
-          <ListItemButton
-            selected={selectedIndex === 0}
-            onClick={(event) => handleListItemClick(event, 0)}
-          >
-            <ListItemIcon>
-              <AccountBox />
-            </ListItemIcon>
-            <ListItemText primary="Name" />
-          </ListItemButton>
-          <ListItemButton
-            selected={selectedIndex === 0}
-            onClick={(event) => handleListItemClick(event, 0)}
-          >
-            <ListItemIcon>
-              <Email />
-            </ListItemIcon>
-            <ListItemText primary="Email" />
-          </ListItemButton>
-          <ListItemButton
-            selected={selectedIndex === 1}
-            onClick={(event) => handleListItemClick(event, 1)}
-          >
-            <ListItemIcon>
-              <Phone />
-            </ListItemIcon>
-            <ListItemText primary="Phone" />
-          </ListItemButton>
-          <ListItemButton
-            selected={selectedIndex === 0}
-            onClick={(event) => handleListItemClick(event, 0)}
-          >
-            <ListItemIcon>
-              <Home />
-            </ListItemIcon>
-            <ListItemText primary="Home" />
-          </ListItemButton>
-        </List>
+      <Typography variant="h6" p={1} sx={{ textAlign: "center" }}>
+        Placerholder
+      </Typography>
+      <Box height={250}>Client info display placeholder</Box>
+      <Divider />
+      <Box>
+        <form onSubmit={handleSubmit}>
+          {clientDetails.map((detail) => (
+            <Box
+              mb={2}
+              pl={2}
+              pr={2}
+              sx={{ display: "flex", flexDirection: "column" }}
+              key={detail}
+            >
+              <TextField
+                type="text"
+                name={detail}
+                id={detail}
+                label={detail}
+                value={clientData[detail]}
+                onChange={handleChange}
+              ></TextField>
+            </Box>
+          ))}
+          <Button variant="contained" type="submit">
+            Query
+          </Button>
+        </form>
       </Box>
     </>
   );

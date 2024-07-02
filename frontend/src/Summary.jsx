@@ -1,9 +1,13 @@
-import React from 'react'
+import { Button } from "@mui/material";
+import React from "react";
 
 function Summary({ summary }) {
   return (
-    <div>{summary}</div>
-  )
+    <>
+      <Button variant="contained">Confirm</Button>
+      <div>{summary}</div>
+    </>
+  );
 }
 
-export default Summary
+export default Summary;

@@ -37,15 +37,27 @@ export function transcribeAudioToText(audioFileName) {
 
 // Get summary
 export function fetchSummary(fileName) {
-//   const fetched = fetch(`${BACKEND_URL}/api/get-summary`);
-//   return chainPromise(fetched);
+  //   const fetched = fetch(`${BACKEND_URL}/api/get-summary`);
+  //   return chainPromise(fetched);
 
   const url = new URL(`${API_BASE_URL}/api/get-summary`);
   url.searchParams.append("fileName", fileName);
 
-  console.log("url:", url)
-  console.log("search params:", url.searchParams)
+  console.log("url:", url);
+  console.log("search params:", url.searchParams);
 
   const fetched = fetch(url);
+  return chainPromise(fetched);
+}
+
+// Get/Post/Patch client data
+export function fetchClientData(clientObj) {
+  const fetched = fetch(`${API_BASE_URL}/api/user-data`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ clientObj }),
+  });
   return chainPromise(fetched);
 }
