@@ -83,7 +83,7 @@ router.post(
       //upload audio to s3 bucket
       const audioUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${file.originalname}`;
 
-      // Store audio url for later use
+      // Store audio url for later use 
       // getSummaryAudioURL(audioUrl);
 
       res.json({ message: "Audio uploaded successfully.", audioUrl });
@@ -223,7 +223,7 @@ router.get("/get-summary", async (req, res) => {
 
     // Store summmary text for later use
     // getSummaryText(summary);
-
+    console.log(summary)
     res.json({ summary });
   } catch (err) {
     console.error(err);

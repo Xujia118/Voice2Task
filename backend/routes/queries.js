@@ -105,7 +105,7 @@ router.post("/store-summary", async (req, res) => {
   try {
     // let client_id = await findClient({ name, phone }).client_id;
     const clientObj = await findClient({ name, phone });
-    const client_id = clientObj.client_id;
+    const client_id = clientObj.client_id; 
 
     if (!client_id) {
       client_id = await createClient({ name, phone, email });
@@ -126,7 +126,7 @@ router.post("/get-summary-list", async (req, res) => {
 
   const clientObj = await findClient({ name, phone });
 
-  // Handle case where clientObj is undefined: user doesn't exist in database
+  // Handle case where clientObj is undefined: user doesn't exist in database  
 
 
   const client_id = clientObj.client_id; 

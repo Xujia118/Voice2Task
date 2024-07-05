@@ -55,7 +55,7 @@ function Summary({
 
   return (
     <>
-      <form>
+      <form onClick={handleSubmit}>
         {clientDetails.map((detail) => (
           <TextField
             key={detail}
@@ -67,12 +67,12 @@ function Summary({
             onChange={handleChange}
           />
         ))}
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button variant="contained" type="submit">
           save
         </Button>
       </form>
       <Box>
-        <p>{summary}</p>
+        <p>placeholder: {summary}</p>
       </Box>
     </>
   );

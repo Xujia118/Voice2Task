@@ -32,8 +32,11 @@ function App() {
       // Wait three seconds to process summary
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const summaryData = await fetchSummary(fileName);
-      dispatch({ type: ACTIONS.SUMMARIZE, payload: summaryData.summary });
+      const data = await fetchSummary(fileName);
+      
+      console.log("summary received:", data)
+
+      dispatch({ type: ACTIONS.SUMMARIZE, payload: data.summary });
     } catch (err) {
       console.error(err);
     }
@@ -129,7 +132,7 @@ function App() {
         switchTab={switchTab}
         fileName={state.fileName}
         summarizePhoneCall={summarizePhoneCall}
-        summary={state.newSmmary}
+        summary={state.newSummary}
         onFetchGetClient={onFetchGetClient}
         onFetchCreateClient={onFetchCreateClient}
         onFetchStoreSummary={onFetchStoreSummary}

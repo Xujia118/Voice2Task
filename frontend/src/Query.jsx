@@ -12,10 +12,9 @@ function Query({ allSummaries, clientData, onFetchSummaryList }) {
 
   return (
     <div>
-      <Button variant="contained">View client history</Button>
       <ul>
         {allSummaries.map((listObj) => (
-          <li key={listObj.created_at}>
+          <li key={listObj.summary_text}>
             {listObj.summary_text}
             {listObj.created_at}
           </li>
