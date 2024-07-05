@@ -15,7 +15,7 @@ function Query({ allSummaries, clientData, onFetchSummaryList }) {
       <Button variant="contained">View client history</Button>
       <ul>
         {allSummaries.map((listObj) => (
-          <li>
+          <li key={listObj.created_at}>
             {listObj.summary_text}
             {listObj.created_at}
           </li>

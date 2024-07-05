@@ -28,8 +28,6 @@ function ClientDetails({ dispatch, clientData, onFetchGetClient }) {
     console.log(localClientData);
     onFetchGetClient(localClientData);
 
-    dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: localClientData });
-
     // Clear form at submit
     setLocalClientData({
       name: "",
@@ -64,6 +62,7 @@ function ClientDetails({ dispatch, clientData, onFetchGetClient }) {
                 id={detail}
                 label={detail}
                 // value={clientData[detail]}
+                // value={detail}
                 onChange={handleChange}
               ></TextField>
             </Box>

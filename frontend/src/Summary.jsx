@@ -1,4 +1,7 @@
 import { Box, Button, Divider, TextField } from "@mui/material";
+import { useState } from "react";
+
+const clientDetails = ["name", "phone"];
 
 function Summary({
   summary,
@@ -6,42 +9,65 @@ function Summary({
   onFetchCreateClient,
   onFetchStoreSummary,
 }) {
-  const handleSave = async () => {
-    console.log("client data:", clientData);
+  const [localClientData, setLocalClientData] = useState({
+    name: "",
+    phone: "",
+  });
 
-    // If a query has been launched, clientData state will contain its info
-    // We can directly save
+  const handleChange = (e) => {
+    // const { name, value } = e.target;
+    // setLocalClientData({
+    //   ...localClientData,
+    //   [name]: value,
+    // });
+    setLocalClientData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
-    // Otherwise, user can enter client name and phone here
-    // We can combine query + save
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    // If the client does not exist, prompt the user to create a new client first
-    // Then save the summary
+    // onFetchStoreSummary() will handle both finding an existing client or creating a new client
+    // All it needs is {clientName, clientPhone}, so here we just need to send clientName and clientPhone.
+    // If a query has been launched and the client is found, clientData state will contain its info
+    const clientName = clientData.name;
+    const clientPhone = clientData.phone;
+    if (clientName && clientPhone) {
+      onFetchStoreSummary({ clientName, clientPhone });
+      return;
+    }
+
+    // Otherwise, clientData is {}. We use localClientData here.
+    console.log(localClientData)
+    onFetchStoreSummary(localClientData);
+
+    // All this is to save the caller some time and effort.
+    // TODO: Add validation
   };
 
   return (
     <>
       <form>
-        <TextField
-          id="standard-basic"
-          label="Client Name"
-          // variant="standard"
-          value={clientData.name}
-        />
-        <TextField
-          id="standard-basic"
-          label="Client Phone"
-          // variant="standard"
-          value={clientData.phone}
-        />
-        <Button variant="contained" onClick={handleSave}>
+        {clientDetails.map((detail) => (
+          <TextField
+            key={detail}
+            id="standard-basic"
+            placeholder={`Client ${detail}`}
+            variant="standard"
+            name={detail}
+            value={clientData[detail]}
+            onChange={handleChange}
+          />
+        ))}
+        <Button variant="contained" onClick={handleSubmit}>
           save
         </Button>
       </form>
       <Box>
         <p>{summary}</p>
       </Box>
-      <div>{summary}</div>
     </>
   );
 }

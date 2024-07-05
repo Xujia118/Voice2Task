@@ -81,9 +81,14 @@ function App() {
   const onFetchGetClient = async (clientObj) => {
     try {
       const data = await fetchGetClient(clientObj);
-      dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
+      if (!data.clientData) {
+        dispatch({ type: ACTIONS.REPORT_ERROR, payload: data.message});
+      } else {
+        dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
+      }
     } catch (err) {
       console.log(err);
+      dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error })
     }
   };
 
@@ -96,9 +101,10 @@ function App() {
     }
   };
 
-  const onFetchStoreSummary = async () => {
+  const onFetchStoreSummary = async (clientObj) => {
     try {
       const data = await fetchStoreSummary(clientObj);
+      console.log("data:", data)
       dispatch({ type: ACTIONS.STORE_SUMMARY, payload: data.message });
     } catch (err) {
       console.log(err);

@@ -13,7 +13,7 @@ async function findClient({ name, phone }) {
 
   try {
     const [rows] = await db.query(q, [name, phone]);
-    // console.log("client query:", rows[0])
+    // console.log("client query:", rows)
     return rows[0];
   } catch (err) {
     console.error("Error executing query:", err);
@@ -58,11 +58,11 @@ router.post("/get-client", async (req, res) => {
   try {
     const client = await findClient({ name, phone });
 
-    if (client.length === 0) {
-      return res.status(404).json({ message: "Client not found" });
+    if (!client) {
+      return res.status(404).json({ clientData: null, message: "Client not found" });
     }
 
-    return res.json({ clientData: client });
+    return res.json({ clientData: client, message: "Client found" });
   } catch (err) {
     console.error("Error fetching client data:", err);
     res.status(500).json({ error: "Internal server error" });
@@ -98,7 +98,10 @@ router.post("/create-client", async (req, res) => {
 // then we create summary with the client_id
 router.post("/store-summary", async (req, res) => {
   const { name, phone } = req.body;
-  const [summary_text, url] = getSummaryInfo()
+
+  console.log("received:", name, phone); 
+  
+  const [summary_text, url] = getSummaryInfo() // not sure
 
   try {
     // let client_id = await findClient({ name, phone }).client_id;
@@ -114,9 +117,7 @@ router.post("/store-summary", async (req, res) => {
     res.status(201).json({ messge: "Summary created successfully." });
   } catch (err) {
     console.error("Error creating summary:", err);
-    res
-      .status(500)
-      .json({ message: "Error creating summary", err: err.message });
+    res.status(500).json({ error: "Error creating summary" });
   }
 });
 
@@ -127,7 +128,7 @@ router.post("/get-summary-list", async (req, res) => {
   const clientObj = await findClient({ name, phone });
 
   // Handle case where clientObj is undefined: user doesn't exist in database
-  
+
 
   const client_id = clientObj.client_id; 
 
@@ -141,7 +142,7 @@ router.post("/get-summary-list", async (req, res) => {
     res.json({ summaryList });
   } catch (err) {
     console.error("Error fetching summary list:", err);
-    throw err;
+    res.status(500).json({ error: "Error fetching summary list" });
   }
 });
 

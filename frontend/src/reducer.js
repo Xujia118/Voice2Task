@@ -8,6 +8,7 @@ export const initialState = {
   clientData: {},
   allSummaries: [], 
   error: "",
+  message: "",
 };
 
 export function reducer(state, action) {
@@ -47,7 +48,7 @@ export function reducer(state, action) {
     case ACTIONS.STORE_SUMMARY:
       return {
         ...state,
-
+        message: action.payload
       }
 
     case ACTIONS.FETCH_SUMMARY_LIST:

@@ -8,4 +8,5 @@ export const ACTIONS = {
     CREATE_CLIENT: "create client",
     STORE_SUMMARY: "store summary",
     FETCH_SUMMARY_LIST: "fetch summary list",
+    REPORT_ERROR: "report error",
 }
