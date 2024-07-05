@@ -7,7 +7,6 @@ function Query({ allSummaries, clientData, onFetchSummaryList }) {
   }
 
   useEffect(() => {
-    console.log("client data:", clientData)
     onFetchSummaryList(clientData)
   }, []);
 

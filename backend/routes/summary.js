@@ -6,6 +6,9 @@ import multer from "multer";
 
 const router = express.Router();
 
+// Custom files import
+import { getSummaryText, getSummaryAudioURL } from "./utils.js";
+
 // AWS imports
 import {
   S3Client,
@@ -77,16 +80,13 @@ router.post(
       const command = new PutObjectCommand(params);
       await s3Client.send(command);
 
-      //upload video to s3 bucket
-      const videoUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${file.originalname}`;
-      res
-        .status(200)
-        .json({ message: "Video uploaded successfully.", videoUrl });
+      //upload audio to s3 bucket
+      const audioUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${file.originalname}`;
 
-      // const videoUrl = await uploadToS3(file);
-      // res.status(200).json({ message: "Video uploaded successfully.", videoUrl });
-      // req.videoUrl = videoUrl;
-      // next();
+      // Store audio url for later use
+      getSummaryAudioURL(audioUrl);
+
+      res.json({ message: "Audio uploaded successfully.", audioUrl });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Error uploading video." });
@@ -172,7 +172,7 @@ router.get("/get-summary", async (req, res) => {
   // Convert file name, replace .mp4 with .json
   const jsonFileName = fileName.replace(".mp3", ".json");
 
-  console.log("get summary:", jsonFileName);
+  // console.log("get summary:", jsonFileName);
 
   if (!fileName) {
     return res.status(400).send("Missing fileName query parameter.");
@@ -222,9 +222,11 @@ router.get("/get-summary", async (req, res) => {
     });
 
     const summary = msg.content[0].text;
-    console.log(summary);
-    //here
-    res.status(200).json({ summary });
+    
+    // Store summmary text for later use
+    getSummaryText(summary);
+
+    res.json({ summary });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving file.");

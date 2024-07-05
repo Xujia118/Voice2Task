@@ -88,7 +88,6 @@ function App() {
   const onFetchSummaryList = async (clientObj) => {
     try {
       const data = await fetchGetSummaryList(clientObj);
-      console.log("data:", data)
       dispatch({ type: ACTIONS.FETCH_SUMMARY_LIST, payload: data.summaryList });
     } catch (err) {
       console.log(err);

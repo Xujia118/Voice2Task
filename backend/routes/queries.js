@@ -5,6 +5,7 @@ import express from "express";
 const router = express.Router();
 
 import db from "../db.js";
+import { getSummaryInfo } from "./utils.js";
 
 // Helper functions
 async function findClient({ name, phone }) {
@@ -95,7 +96,8 @@ router.post("/create-client", async (req, res) => {
 // if client doesn't exist, we have to creat a new one
 // then we create summary with the client_id
 router.post("/store-summary", async (req, res) => {
-  const { name, phone, summary_text, url } = req.body;
+  const { name, phone } = req.body;
+  const [summary_text, url] = getSummaryInfo()
 
   try {
     // let client_id = await findClient({ name, phone }).client_id;
