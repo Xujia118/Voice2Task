@@ -48,7 +48,7 @@ function WorkBench({
   allSummaries,
   dispatch,
   clientData,
-  onFetchClientData,
+  onFetchGetClient,
 }) {
   const [value, setValue] = useState(0);
 
@@ -64,7 +64,7 @@ function WorkBench({
             sx={{ flex: 1 }}
             dispatch={dispatch}
             clientData={clientData}
-            onFetchClientData={onFetchClientData}
+            onFetchGetClient={onFetchGetClient}
           />
         </Box>
         <Box sx={{ flex: 3 }}>
@@ -90,16 +90,12 @@ function WorkBench({
               />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-              <Summary
-                summary={summary}
-                onFetchClientData={onFetchClientData}
-              />
+              <Summary summary={summary} onFetchGetClient={onFetchGetClient} />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
               <Query
                 allSummaries={allSummaries}
                 clientData={clientData}
-                onFetchClientData={onFetchClientData}
               />
             </CustomTabPanel>
           </Box>

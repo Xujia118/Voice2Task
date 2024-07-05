@@ -5,13 +5,12 @@ import { ACTIONS } from "./constants";
 import { Button, Divider, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 
-const clientDetails = ["name", "phone", "email"];
+const clientDetails = ["name", "phone"];
 
-function ClientDetails({ dispatch, clientData, onFetchClientData }) {
+function ClientDetails({ dispatch, clientData, onFetchGetClient }) {
   const [localClientData, setLocalClientData] = useState({
     name: "",
     phone: "",
-    // email: ""
   });
 
   const handleChange = (e) => {
@@ -27,7 +26,7 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
 
     // send the client data object to backend for query
     console.log(localClientData);
-    onFetchClientData(localClientData);
+    onFetchGetClient(localClientData);
 
     dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: localClientData });
 
@@ -35,7 +34,6 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
     setLocalClientData({
       name: "",
       phone: "",
-      // email: "",
     });
   };
 
@@ -45,9 +43,9 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
         Placerholder
       </Typography>
       <Box height={250}>
-        {/* {Object.values(clientData).map((item) => (
+        {Object.values(clientData).map((item) => (
           <li key={item}>{item}</li>
-        ))} */}
+        ))}
       </Box>
       <Divider />
       <Box>

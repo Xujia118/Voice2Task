@@ -50,11 +50,43 @@ export function fetchSummary(fileName) {
   return chainPromise(fetched);
 }
 
-// Append summary to client Data
+// DB operations
+export function fetchGetClient(clientObj) {
+  
+  const fetched = fetch(`${API_BASE_URL}/api/get-client`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(clientObj),
+  });
+  return chainPromise(fetched);
+}
 
-// Get/Post/Patch client data
-export function fetchClientData(clientObj) {
-  const fetched = fetch(`${API_BASE_URL}/api/user-data`, {
+export function fetchCreateClient(clientObj) {
+  const fetched = fetch(`${API_BASE_URL}/api/create-client`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ clientObj }),
+  });
+  return chainPromise(fetched);
+}
+
+export function fetchStoreSummary(clientObj) {
+  const fetched = fetch(`${API_BASE_URL}/api/store-summary`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ clientObj }),
+  });
+  return chainPromise(fetched);
+}
+
+export function fetchGetSummaryList(clientObj) {
+  const fetched = fetch(`${API_BASE_URL}/api/get-summary-list`, {
     method: "POST",
     headers: {
       "content-type": "application/json",

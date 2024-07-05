@@ -38,7 +38,6 @@ export function reducer(state, action) {
       return {
         ...state,
         clientData: action.payload,
-        allSummaries: action.payload, // To add .summaries 
       };
 
     default:

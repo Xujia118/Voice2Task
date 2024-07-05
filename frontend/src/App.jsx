@@ -7,7 +7,7 @@ import WorkBench from "./WorkBench";
 import Header from "./Header";
 
 import {
-  fetchClientData,
+  fetchGetClient,
   fetchSummary,
   storeAudioToS3,
   transcribeAudioToText,
@@ -75,9 +75,9 @@ function App() {
     return false;
   };
 
-  const onFetchClientData = async (clientObj) => {
+  const onFetchGetClient = async (clientObj) => {
     try {
-      const data = await fetchClientData(clientObj);
+      const data = await fetchGetClient(clientObj);
       dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
     } catch(err) {
       console.log(err);
@@ -94,9 +94,12 @@ function App() {
         fileName={state.fileName}
         summarizePhoneCall={summarizePhoneCall}
         summary={state.newSmmary}
-        allSummaries={state.allSummaries}
+        
+        onFetchGetClient={onFetchGetClient}
+        
         clientData={state.clientData}
-        onFetchClientData={onFetchClientData}
+
+        allSummaries={state.allSummaries}
       />
     </>
   );

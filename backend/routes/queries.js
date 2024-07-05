@@ -12,7 +12,7 @@ async function findClient({ name, phone }) {
 
   try {
     const [rows] = await db.query(q, [name, phone]);
-    return rows[0].client_id;
+    return rows[0];
   } catch (err) {
     console.error("Error executing query:", err);
     throw err;
@@ -52,18 +52,18 @@ router.post("/get-client", async (req, res) => {
   if (!name || !phone) {
     return res.status(400).json({ error: "Name and phone are required." });
   }
-
+  
   try {
     const client = await findClient({ name, phone });
-
+    
+    
     if (client.length === 0) {
       return res.status(404).json({ message: "Client not found" });
     }
-
-    console.log("client:", client);
-    return res.json(client[0]);
+    
+    return res.json({clientData: client});
   } catch (err) {
-    console.error("Error fetching client data:", error);
+    console.error("Error fetching client data:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -99,7 +99,7 @@ router.post("/store-summary", async (req, res) => {
   const { name, phone, summary_text, url } = req.body;
 
   try {
-    let client_id = await findClient({ name, phone });
+    let client_id = await findClient({ name, phone }).client_id;
     if (!client_id) {
       client_id = await createClient({ name, phone, email });
     }
@@ -125,8 +125,9 @@ router.post("/get-summary-list", async (req, res) => {
               INNER JOIN clients ON summaries.client_id = clients.client_id 
               WHERE clients.client_id = ?`;
   try {
-    const [result] = await db.query(q, [client_id]);
-    console.log("summary list:", result);
+    const [summaryList] = await db.query(q, [client_id]);
+    console.log("summary list:", summaryList);
+    res.json({ summaryList })
   } catch (err) {
     console.error("Error fetching summary list:", err);
     throw err;
