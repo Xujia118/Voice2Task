@@ -7,7 +7,7 @@ import multer from "multer";
 const router = express.Router();
 
 // Custom files import
-import { getSummaryText, getSummaryAudioURL } from "./utils.js";
+// import { getSummaryText, getSummaryAudioURL } from "./utils.js";
 
 // AWS imports
 import {
@@ -84,7 +84,7 @@ router.post(
       const audioUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${file.originalname}`;
 
       // Store audio url for later use
-      getSummaryAudioURL(audioUrl);
+      // getSummaryAudioURL(audioUrl);
 
       res.json({ message: "Audio uploaded successfully.", audioUrl });
     } catch (err) {
@@ -222,7 +222,7 @@ router.get("/get-summary", async (req, res) => {
     const summary = msg.content[0].text;
 
     // Store summmary text for later use
-    getSummaryText(summary);
+    // getSummaryText(summary);
 
     res.json({ summary });
   } catch (err) {

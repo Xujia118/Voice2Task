@@ -15,14 +15,10 @@ function Summary({
   });
 
   const handleChange = (e) => {
-    // const { name, value } = e.target;
-    // setLocalClientData({
-    //   ...localClientData,
-    //   [name]: value,
-    // });
+    const { name, value } = e.target;
     setLocalClientData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
   };
 
@@ -35,13 +31,23 @@ function Summary({
     const clientName = clientData.name;
     const clientPhone = clientData.phone;
     if (clientName && clientPhone) {
-      onFetchStoreSummary({ clientName, clientPhone });
+      onFetchStoreSummary({
+        clientName,
+        clientPhone,
+        summary_text: summary,
+        url: "URLPlacerholder",
+      });
       return;
     }
 
     // Otherwise, clientData is {}. We use localClientData here.
-    console.log(localClientData)
-    onFetchStoreSummary(localClientData);
+    const updatedLocalClientData = {
+      ...localClientData,
+      summary_text: summary,
+      url: "URLPlaceholder",
+    };
+
+    onFetchStoreSummary(updatedLocalClientData);
 
     // All this is to save the caller some time and effort.
     // TODO: Add validation

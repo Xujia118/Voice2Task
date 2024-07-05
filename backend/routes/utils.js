@@ -6,10 +6,11 @@ export function getSummaryAudioURL(url) {
 export function getSummaryText(summary) {
     console.log("summary text received:", summary);
     return summary
-}
+} 
+
+const summaryAudioURL = getSummaryAudioURL(url);
+const summaryText = getSummaryText(summary);
 
 export function getSummaryInfo() {
-  const summaryAudioURL = getSummaryAudioURL(url);
-  const summaryText = getSummaryText(summary);
   return [summaryText, summaryAudioURL];
 }
