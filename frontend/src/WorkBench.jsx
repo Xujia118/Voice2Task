@@ -49,6 +49,7 @@ function WorkBench({
   dispatch,
   clientData,
   onFetchGetClient,
+  onFetchSummaryList,
 }) {
   const [value, setValue] = useState(0);
 
@@ -96,6 +97,7 @@ function WorkBench({
               <Query
                 allSummaries={allSummaries}
                 clientData={clientData}
+                onFetchSummaryList={onFetchSummaryList}
               />
             </CustomTabPanel>
           </Box>

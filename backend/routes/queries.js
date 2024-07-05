@@ -52,16 +52,15 @@ router.post("/get-client", async (req, res) => {
   if (!name || !phone) {
     return res.status(400).json({ error: "Name and phone are required." });
   }
-  
+
   try {
     const client = await findClient({ name, phone });
-    
-    
+
     if (client.length === 0) {
       return res.status(404).json({ message: "Client not found" });
     }
-    
-    return res.json({clientData: client});
+
+    return res.json({ clientData: client });
   } catch (err) {
     console.error("Error fetching client data:", err);
     res.status(500).json({ error: "Internal server error" });
@@ -99,7 +98,10 @@ router.post("/store-summary", async (req, res) => {
   const { name, phone, summary_text, url } = req.body;
 
   try {
-    let client_id = await findClient({ name, phone }).client_id;
+    // let client_id = await findClient({ name, phone }).client_id;
+    const clientObj = await findClient({ name, phone });
+    const client_id = clientObj.client_id;
+
     if (!client_id) {
       client_id = await createClient({ name, phone, email });
     }
@@ -119,15 +121,17 @@ router.post("/store-summary", async (req, res) => {
 router.post("/get-summary-list", async (req, res) => {
   const { name, phone } = req.body;
 
-  const client_id = await findClient({ name, phone });
+  const clientObj = await findClient({ name, phone });
+  const client_id = clientObj.client_id; 
 
-  const q = `SELECT summaries.* FROM summaries 
-              INNER JOIN clients ON summaries.client_id = clients.client_id 
-              WHERE clients.client_id = ?`;
+  const q = `SELECT summary_text, created_at FROM summaries 
+             INNER JOIN clients ON summaries.client_id = clients.client_id 
+             WHERE clients.client_id = ?`;
   try {
-    const [summaryList] = await db.query(q, [client_id]);
+    const result = await db.query(q, [client_id]);
+    const summaryList = result[0]
     console.log("summary list:", summaryList);
-    res.json({ summaryList })
+    res.json({ summaryList });
   } catch (err) {
     console.error("Error fetching summary list:", err);
     throw err;

@@ -8,6 +8,7 @@ import Header from "./Header";
 
 import {
   fetchGetClient,
+  fetchGetSummaryList,
   fetchSummary,
   storeAudioToS3,
   transcribeAudioToText,
@@ -27,7 +28,7 @@ function App() {
       await isTranscriptionComplete(fileName);
 
       // Wait three seconds to process summary
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       const summaryData = await fetchSummary(fileName);
       dispatch({ type: ACTIONS.SUMMARIZE, payload: summaryData.summary });
@@ -79,10 +80,20 @@ function App() {
     try {
       const data = await fetchGetClient(clientObj);
       dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
-  }
+  };
+
+  const onFetchSummaryList = async (clientObj) => {
+    try {
+      const data = await fetchGetSummaryList(clientObj);
+      console.log("data:", data)
+      dispatch({ type: ACTIONS.FETCH_SUMMARY_LIST, payload: data.summaryList });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -94,11 +105,9 @@ function App() {
         fileName={state.fileName}
         summarizePhoneCall={summarizePhoneCall}
         summary={state.newSmmary}
-        
         onFetchGetClient={onFetchGetClient}
-        
+        onFetchSummaryList={onFetchSummaryList}
         clientData={state.clientData}
-
         allSummaries={state.allSummaries}
       />
     </>

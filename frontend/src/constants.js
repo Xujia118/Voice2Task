@@ -5,5 +5,5 @@ export const ACTIONS = {
     END_PHONE: "end phone",
     SUMMARIZE: "Summarize",
     FETCH_CLIENT_DATA: "fetch client data",
-    QUERY: "query" // TO DECIDE
+    FETCH_SUMMARY_LIST: "fetch summary list",
 }

@@ -1,22 +1,25 @@
 import { Button } from "@mui/material";
 import { useEffect } from "react";
 
-function Query({ allSummaries, clientData, onFetchClientData }) {
+function Query({ allSummaries, clientData, onFetchSummaryList }) {
   if (!allSummaries) {
     return <p>No records</p>;
   }
 
-  // Every time this tab is loaded, update client state to get summary list
   useEffect(() => {
-    onFetchClientData(clientData);
+    console.log("client data:", clientData)
+    onFetchSummaryList(clientData)
   }, []);
 
   return (
     <div>
       <Button variant="contained">View client history</Button>
       <ul>
-        {allSummaries.map((summary) => (
-          <li>{summary}</li>
+        {allSummaries.map((listObj) => (
+          <li>
+            {listObj.summary_text}
+            {listObj.created_at}
+          </li>
         ))}
       </ul>
     </div>

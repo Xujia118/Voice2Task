@@ -5,8 +5,8 @@ export const initialState = {
   fileName: "",
   loading_summary: false,
   newSummary: "",
-  allSummaries: [], // singleit out although it's part of clientData obj as client data obj might change
   clientData: {},
+  allSummaries: [], // singleit out although it's part of clientData obj as client data obj might change
 };
 
 export function reducer(state, action) {
@@ -39,6 +39,12 @@ export function reducer(state, action) {
         ...state,
         clientData: action.payload,
       };
+
+    case ACTIONS.FETCH_SUMMARY_LIST:
+      return {
+        ...state,
+        allSummaries: action.payload
+      }
 
     default:
       return state;

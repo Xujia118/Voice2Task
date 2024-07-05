@@ -91,7 +91,7 @@ export function fetchGetSummaryList(clientObj) {
     headers: {
       "content-type": "application/json",
     },
-    body: JSON.stringify({ clientObj }),
+    body: JSON.stringify(clientObj),
   });
   return chainPromise(fetched);
 }
