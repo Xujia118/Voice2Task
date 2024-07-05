@@ -5,12 +5,13 @@ import { ACTIONS } from "./constants";
 import { Button, Divider, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 
-const clientDetails = ["Name", "Phone", "Email", "Address"];
+const clientDetails = ["name", "phone", "email"];
 
 function ClientDetails({ dispatch, clientData, onFetchClientData }) {
   const [localClientData, setLocalClientData] = useState({
     name: "",
-    phoneNumber: "",
+    phone: "",
+    // email: ""
   });
 
   const handleChange = (e) => {
@@ -33,7 +34,8 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
     // Clear form at submit
     setLocalClientData({
       name: "",
-      phoneNumber: "",
+      phone: "",
+      // email: "",
     });
   };
 
@@ -43,9 +45,9 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
         Placerholder
       </Typography>
       <Box height={250}>
-        {Object.keys(clientData).map((item) => (
+        {/* {Object.values(clientData).map((item) => (
           <li key={item}>{item}</li>
-        ))}
+        ))} */}
       </Box>
       <Divider />
       <Box>

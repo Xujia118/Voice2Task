@@ -2,32 +2,50 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-// import mysql from "mysql2/promise";
-
 const router = express.Router();
 
-// MySQL connection
-// const db = await mysql.createConnection({
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-// });
+import db from "../db.js";
 
-// Write these helper functions
-// User you previous logic in api
-async function findClient(clientObj) {}
+// Helper functions
+async function findClient(clientObj) {
+  const { name, phone } = clientObj;
+  const q = "SELECT * FROM clients WHERE name = ? AND phone = ?";
 
-async function createClient(clientObj) {}
+  try {
+    const [rows] = await db.query(q, [name, phone]);
+    console.log("data to return", rows);
+    return rows;
+  } catch (err) {
+    console.error("Error executing query:", err);
+    throw err;
+  }
+
+  // Check out the differences. Both codes seem to work
+  // db.query(q, [name, phone], (err, data) => {
+  //   if (err) {
+  //     return;
+  //   }
+  //   console.log("data to return", data)
+  //   return data;
+  // });
+}
+
+async function createClient(clientObj) {
+  
+}
 
 async function updateClient(clientObj) {}
 
-// Get client data. 
+async function createSummary(client_id, newSummary) {
+
+};
+
+// Get client data.
 // We must use post because we send client data in req.body
 router.post("/user-data", async (req, res) => {
   const { clientObj } = req.body;
 
-  console.log(clientObj);
+  console.log("received obj:", clientObj);
 
   try {
     let clientData = await findClient(clientObj);
@@ -57,45 +75,14 @@ router.post("/user-data", async (req, res) => {
   }
 });
 
-// post summary file to tables
+// post summary
+// summary needs a foreign key, which is client_id
+// So we need to first find the client; if client doesn't exist, 
+// we have to create one and get his client_id
+// then we create summary with the client_id
+
 router.post("/store-user-summary", async (req, res) => {
   const { name, phoneNumber, summary } = req.body;
-
-  try {
-    const [existingRows] = await db.execute(
-      "SELECT * FROM Users WHERE username = ? AND phone_number = ?",
-      [name, phoneNumber]
-    );
-
-    if (existingRows.length > 0) {
-      const existingUser = existingRows[0];
-      const updatedFiles = existingUser.summary_files
-        ? `${existingUser.summary_files}, ${summary}`
-        : summary;
-
-      await db.execute(
-        "UPDATE Users SET summary_files = ? WHERE username = ? AND phone_number = ?",
-        [updatedFiles, name, phoneNumber]
-      );
-
-      res
-        .status(200)
-        .json({ message: "add summary to users table successfully." });
-    } else {
-      await db.execute(
-        "INSERT INTO Users (username, phone_number, summary_files) VALUES (?, ?, ?)",
-        [name, phoneNumber, summary]
-      );
-      res
-        .status(200)
-        .json({ message: "New user created with sumary successfully." });
-    }
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ message: "Error storing or updating user information." });
-  }
 });
 
 export default router;
