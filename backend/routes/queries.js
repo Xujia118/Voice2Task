@@ -7,82 +7,130 @@ const router = express.Router();
 import db from "../db.js";
 
 // Helper functions
-async function findClient(clientObj) {
-  const { name, phone } = clientObj;
+async function findClient({ name, phone }) {
   const q = "SELECT * FROM clients WHERE name = ? AND phone = ?";
 
   try {
     const [rows] = await db.query(q, [name, phone]);
-    console.log("data to return", rows);
-    return rows;
+    return rows[0].client_id;
   } catch (err) {
     console.error("Error executing query:", err);
     throw err;
   }
-
-  // Check out the differences. Both codes seem to work
-  // db.query(q, [name, phone], (err, data) => {
-  //   if (err) {
-  //     return;
-  //   }
-  //   console.log("data to return", data)
-  //   return data;
-  // });
 }
 
-async function createClient(clientObj) {
-  
-}
-
-async function updateClient(clientObj) {}
-
-async function createSummary(client_id, newSummary) {
-
-};
-
-// Get client data.
-// We must use post because we send client data in req.body
-router.post("/user-data", async (req, res) => {
-  const { clientObj } = req.body;
-
-  console.log("received obj:", clientObj);
+async function createClient({ name, phone, email }) {
+  const q = "INSERT INTO clients (name, phone, email) VALUES (?, ?, ?)";
 
   try {
-    let clientData = await findClient(clientObj);
-
-    if (!clientData) {
-      // If client doesn't exist, create a new one
-      clientData = await createClient(clientObj);
-      res.status(201).json({ message: "Client created", clientData });
-    } else {
-      // If client exists, update with new data
-      const updatedData = {};
-      for (const key in clientObj) {
-        if (clientObj[key] !== clientData[key]) {
-          updatedData[key] = clientObj[key];
-        }
-      }
-
-      if (Object.keys(updatedData).length > 0) {
-        clientData = await updateClient(clientData.id, updatedData);
-        res.status(200).json({ message: "Client updated", clientData });
-      } else {
-        res.status(200).json({ message: "No changes needed", clientData });
-      }
-    }
+    const [result] = await db.query(q, [name, phone, email]);
+    console.log("Client created", result.insertId);
+    return result.insertId;
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.err("Error creating client:", err);
+    throw err;
+  }
+}
+
+async function createSummary({ summary_text, url, client_id }) {
+  const q =
+    "INSERT INTO summaries (summary_text, url, client_id) VALUES (?, ?, ?)";
+
+  try {
+    const [result] = await db.query(q, [summary_text, url, client_id]);
+    return result;
+  } catch (err) {
+    console.error("Error creating summary:", err);
+    throw err;
+  }
+}
+
+// Get a client. Since we send in body, we use POST
+router.post("/get-client", async (req, res) => {
+  const { name, phone } = req.body;
+
+  if (!name || !phone) {
+    return res.status(400).json({ error: "Name and phone are required." });
+  }
+
+  try {
+    const client = await findClient({ name, phone });
+
+    if (client.length === 0) {
+      return res.status(404).json({ message: "Client not found" });
+    }
+
+    console.log("client:", client);
+    return res.json(client[0]);
+  } catch (err) {
+    console.error("Error fetching client data:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// post summary
-// summary needs a foreign key, which is client_id
-// So we need to first find the client; if client doesn't exist, 
-// we have to create one and get his client_id
-// then we create summary with the client_id
+// Create a new client
+router.post("/create-client", async (req, res) => {
+  const { name, phone, email } = req.body;
 
-router.post("/store-user-summary", async (req, res) => {
-  const { name, phoneNumber, summary } = req.body;
+  if (!name || !phone) {
+    return res.status(400).json({ error: "Name and phone are required." });
+  }
+
+  try {
+    const client_id = await createClient({ name, phone, email });
+    if (!client_id) {
+      return res.status(500).json({ error: "Failed to create client." });
+    }
+
+    res
+      .status(201)
+      .json({ message: "Client created successfully.", client_id });
+  } catch (err) {
+    console.error("Error creating client:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Create a new summary: summary needs a foreign key, which is client_id
+// So we need to first find the client;
+// if client doesn't exist, we have to creat a new one
+// then we create summary with the client_id
+router.post("/store-summary", async (req, res) => {
+  const { name, phone, summary_text, url } = req.body;
+
+  try {
+    let client_id = await findClient({ name, phone });
+    if (!client_id) {
+      client_id = await createClient({ name, phone, email });
+    }
+
+    const result = await createSummary({ summary_text, url, client_id });
+    console.log("result:", result.insertId);
+    res.status(201).json({ messge: "Summary created successfully." });
+  } catch (err) {
+    console.error("Error creating summary:", err);
+    res
+      .status(500)
+      .json({ message: "Error creating summary", err: err.message });
+  }
+});
+
+// Get all summaries of a client
+router.post("/get-summary-list", async (req, res) => {
+  const { name, phone } = req.body;
+
+  const client_id = await findClient({ name, phone });
+
+  const q = `SELECT summaries.* FROM summaries 
+              INNER JOIN clients ON summaries.client_id = clients.client_id 
+              WHERE clients.client_id = ?`;
+  try {
+    const [result] = await db.query(q, [client_id]);
+    console.log("summary list:", result);
+  } catch (err) {
+    console.error("Error fetching summary list:", err);
+    throw err;
+  }
 });
 
 export default router;
