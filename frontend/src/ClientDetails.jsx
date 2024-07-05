@@ -61,8 +61,7 @@ function ClientDetails({ dispatch, clientData, onFetchGetClient }) {
                 name={detail}
                 id={detail}
                 label={detail}
-                // value={clientData[detail]}
-                // value={detail}
+                value={localClientData[detail]}
                 onChange={handleChange}
               ></TextField>
             </Box>

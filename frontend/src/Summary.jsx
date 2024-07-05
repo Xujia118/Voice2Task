@@ -31,12 +31,13 @@ function Summary({
     const clientName = clientData.name;
     const clientPhone = clientData.phone;
     if (clientName && clientPhone) {
-      onFetchStoreSummary({
-        clientName,
-        clientPhone,
+      const updatedClientData = {
+        ...clientData,
         summary_text: summary,
         url: "URLPlacerholder",
-      });
+      };
+      console.log(updatedClientData);
+      onFetchStoreSummary(updatedClientData);
       return;
     }
 
@@ -46,9 +47,9 @@ function Summary({
       summary_text: summary,
       url: "URLPlaceholder",
     };
-
+    console.log(updatedLocalClientData)
     onFetchStoreSummary(updatedLocalClientData);
-
+    
     // All this is to save the caller some time and effort.
     // TODO: Add validation
   };
@@ -72,7 +73,7 @@ function Summary({
         </Button>
       </form>
       <Box>
-        <p>placeholder: {summary}</p>
+        <p>{summary}</p>
       </Box>
     </>
   );

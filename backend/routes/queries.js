@@ -99,16 +99,14 @@ router.post("/create-client", async (req, res) => {
 router.post("/store-summary", async (req, res) => {
   const { name, phone, summary_text, url } = req.body;
 
-  // console.log("received:", name, phone); 
-  // const [summary_text, url] = getSummaryInfo() // not sure
-
   try {
-    // let client_id = await findClient({ name, phone }).client_id;
-    const clientObj = await findClient({ name, phone });
-    const client_id = clientObj.client_id; 
+    let client_id;
 
-    if (!client_id) {
-      client_id = await createClient({ name, phone, email });
+    const findResult = await findClient({ name, phone });
+    if (findResult) {
+      client_id = findResult.client_id;
+    } else {
+      client_id = await createClient({ name, phone });
     }
 
     const result = await createSummary({ summary_text, url, client_id });
