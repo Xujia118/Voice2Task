@@ -52,7 +52,6 @@ export function fetchSummary(fileName) {
 
 // DB operations
 export function fetchGetClient(clientObj) {
-  
   const fetched = fetch(`${API_BASE_URL}/api/get-client`, {
     method: "POST",
     headers: {
@@ -69,7 +68,7 @@ export function fetchCreateClient(clientObj) {
     headers: {
       "content-type": "application/json",
     },
-    body: JSON.stringify({ clientObj }),
+    body: JSON.stringify(clientObj),
   });
   return chainPromise(fetched);
 }
@@ -80,7 +79,7 @@ export function fetchStoreSummary(clientObj) {
     headers: {
       "content-type": "application/json",
     },
-    body: JSON.stringify({ clientObj }),
+    body: JSON.stringify(clientObj),
   });
   return chainPromise(fetched);
 }

@@ -6,17 +6,12 @@ export const initialState = {
   loading_summary: false,
   newSummary: "",
   clientData: {},
-  allSummaries: [], // singleit out although it's part of clientData obj as client data obj might change
+  allSummaries: [], 
+  error: "",
 };
 
 export function reducer(state, action) {
   switch (action.type) {
-    case ACTIONS.SET_TAB:
-      return {
-        ...state,
-        tab: action.payload,
-      };
-
     case ACTIONS.SET_FILE_NAME:
       return {
         ...state,
@@ -34,11 +29,26 @@ export function reducer(state, action) {
         newSummary: action.payload,
       };
 
+    // get client
     case ACTIONS.FETCH_CLIENT_DATA:
       return {
         ...state,
         clientData: action.payload,
       };
+
+    // create client
+    case ACTIONS.CREATE_CLIENT:
+      return {
+        ...state,
+
+      }
+
+    // store summary
+    case ACTIONS.STORE_SUMMARY:
+      return {
+        ...state,
+
+      }
 
     case ACTIONS.FETCH_SUMMARY_LIST:
       return {

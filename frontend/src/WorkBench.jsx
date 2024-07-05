@@ -49,6 +49,8 @@ function WorkBench({
   dispatch,
   clientData,
   onFetchGetClient,
+  onFetchCreateClient,
+  onFetchStoreSummary,
   onFetchSummaryList,
 }) {
   const [value, setValue] = useState(0);
@@ -91,7 +93,14 @@ function WorkBench({
               />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-              <Summary summary={summary} onFetchGetClient={onFetchGetClient} />
+              <Summary
+                dispatch={dispatch}
+                summary={summary}
+                clientData={clientData}
+                onFetchGetClient={onFetchGetClient}
+                onFetchCreateClient={onFetchCreateClient}
+                onFetchStoreSummary={onFetchStoreSummary}
+              />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
               <Query

@@ -7,8 +7,10 @@ import WorkBench from "./WorkBench";
 import Header from "./Header";
 
 import {
+  fetchCreateClient,
   fetchGetClient,
   fetchGetSummaryList,
+  fetchStoreSummary,
   fetchSummary,
   storeAudioToS3,
   transcribeAudioToText,
@@ -85,6 +87,24 @@ function App() {
     }
   };
 
+  const onFetchCreateClient = async (clientObj) => {
+    try {
+      const data = await fetchCreateClient(clientObj);
+      dispatch({ type: ACTIONS.CREATE_CLIENT, payload: data.client_id });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const onFetchStoreSummary = async () => {
+    try {
+      const data = await fetchStoreSummary(clientObj);
+      dispatch({ type: ACTIONS.STORE_SUMMARY, payload: data.message });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const onFetchSummaryList = async (clientObj) => {
     try {
       const data = await fetchGetSummaryList(clientObj);
@@ -105,6 +125,8 @@ function App() {
         summarizePhoneCall={summarizePhoneCall}
         summary={state.newSmmary}
         onFetchGetClient={onFetchGetClient}
+        onFetchCreateClient={onFetchCreateClient}
+        onFetchStoreSummary={onFetchStoreSummary}
         onFetchSummaryList={onFetchSummaryList}
         clientData={state.clientData}
         allSummaries={state.allSummaries}

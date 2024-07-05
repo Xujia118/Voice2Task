@@ -13,6 +13,7 @@ async function findClient({ name, phone }) {
 
   try {
     const [rows] = await db.query(q, [name, phone]);
+    // console.log("client query:", rows[0])
     return rows[0];
   } catch (err) {
     console.error("Error executing query:", err);
@@ -124,6 +125,10 @@ router.post("/get-summary-list", async (req, res) => {
   const { name, phone } = req.body;
 
   const clientObj = await findClient({ name, phone });
+
+  // Handle case where clientObj is undefined: user doesn't exist in database
+  
+
   const client_id = clientObj.client_id; 
 
   const q = `SELECT summary_text, created_at FROM summaries 
