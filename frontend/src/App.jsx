@@ -84,13 +84,10 @@ function App() {
   const onFetchGetClient = async (clientObj) => {
     try {
       const data = await fetchGetClient(clientObj);
-      if (!data.clientData) {
-        dispatch({ type: ACTIONS.REPORT_ERROR, payload: data.message });
-      } else {
-        dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
-      }
+      dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
     } catch (err) {
       console.log(err);
+      dispatch({ type:ACTIONS.CLEAR_CLIENT_DATA })
       dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
     }
   };

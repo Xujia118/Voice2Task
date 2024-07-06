@@ -5,7 +5,7 @@ export const initialState = {
   fileName: "",
   loading_summary: false,
   newSummary: "",
-  clientData: {},
+  clientData: [],
   allSummaries: [], 
   error: "",
   message: "",
@@ -34,6 +34,7 @@ export function reducer(state, action) {
     case ACTIONS.SUMMARIZE:
       return {
         ...state,
+        error: "",
         newSummary: action.payload,
       };
 
@@ -41,8 +42,15 @@ export function reducer(state, action) {
     case ACTIONS.FETCH_CLIENT_DATA:
       return {
         ...state,
+        error: "",
         clientData: action.payload,
       };
+
+    case ACTIONS.CLEAR_CLIENT_DATA:
+      return {
+        ...state,
+        clientData: []
+      }
 
     // store summary
     case ACTIONS.STORE_SUMMARY:

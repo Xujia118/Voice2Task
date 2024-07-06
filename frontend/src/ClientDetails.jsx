@@ -7,7 +7,13 @@ import Box from "@mui/material/Box";
 
 const clientDetails = ["name", "phone"];
 
-function ClientDetails({ dispatch, clientData, onFetchGetClient }) {
+function ClientDetails({
+  dispatch,
+  clientData,
+  onFetchGetClient,
+  onFetchSummaryList,
+  error,
+}) {
   const [localClientData, setLocalClientData] = useState({
     name: "",
     phone: "",
@@ -27,6 +33,7 @@ function ClientDetails({ dispatch, clientData, onFetchGetClient }) {
     // send the client data object to backend for query
     console.log(localClientData);
     onFetchGetClient(localClientData);
+    onFetchSummaryList(localClientData);
 
     // Clear form at submit
     setLocalClientData({
@@ -41,9 +48,11 @@ function ClientDetails({ dispatch, clientData, onFetchGetClient }) {
         Placerholder
       </Typography>
       <Box height={250}>
-        {Object.values(clientData).map((item) => (
-          <li key={item}>{item}</li>
-        ))}
+        {error ? (
+          <p>{error}</p>
+        ) : (
+          Object.values(clientData).map((item) => <li key={item}>{item}</li>)
+        )}
       </Box>
       <Divider />
       <Box>

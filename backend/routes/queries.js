@@ -59,7 +59,7 @@ router.post("/get-client", async (req, res) => {
     const client = await findClient({ name, phone });
 
     if (!client) {
-      return res.status(404).json({ clientData: null, message: "Client not found" });
+      return res.status(404).json({ clientData: [], error: "Client not found" });
     }
 
     return res.json({ clientData: client, message: "Client found" });

@@ -69,6 +69,7 @@ function WorkBench({
             dispatch={dispatch}
             clientData={clientData}
             onFetchGetClient={onFetchGetClient}
+            onFetchSummaryList={onFetchSummaryList}
             error={error}
           />
         </Box>
@@ -108,8 +109,8 @@ function WorkBench({
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
               <Query
-                allSummaries={allSummaries}
                 clientData={clientData}
+                allSummaries={allSummaries}
                 onFetchSummaryList={onFetchSummaryList}
                 error={error}
               />
