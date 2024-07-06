@@ -3,7 +3,7 @@ import { Box, Button, TextField } from "@mui/material";
 
 const clientDetails = ["name", "phone"];
 
-function Summary({ summary, clientData, onFetchStoreSummary }) {
+function Summary({ summary, audioUrl, clientData, onFetchStoreSummary }) {
   const [localClientData, setLocalClientData] = useState({
     name: "",
     phone: "",
@@ -31,7 +31,7 @@ function Summary({ summary, clientData, onFetchStoreSummary }) {
       const updatedClientData = {
         ...clientData,
         summary_text: summary,
-        url: "URLPlacerholder",
+        url: audioUrl,
       };
       console.log(updatedClientData);
       onFetchStoreSummary(updatedClientData);

@@ -49,6 +49,7 @@ function App() {
     try {
       const data = await storeAudioToS3(blob, file);
       dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
+      dispatch({ type: ACTIONS.FETCH_AUDIO_URL, payload: data.audioUrl });
       return data.message;
     } catch (err) {
       console.log(err);
@@ -138,6 +139,7 @@ function App() {
       <WorkBench
         dispatch={dispatch}
         fileName={state.fileName}
+        audioUrl={state.audioUrl}
         summarizePhoneCall={summarizePhoneCall}
         summary={state.newSummary}
         onFetchGetClient={onFetchGetClient}

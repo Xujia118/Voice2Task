@@ -43,6 +43,7 @@ function WorkBench({
   tab,
   switchTab,
   fileName,
+  audioUrl,
   summarizePhoneCall,
   summary,
   allSummaries,
@@ -99,6 +100,7 @@ function WorkBench({
             <CustomTabPanel value={value} index={1}>
               <Summary
                 dispatch={dispatch}
+                audioUrl={audioUrl}
                 summary={summary}
                 clientData={clientData}
                 onFetchGetClient={onFetchGetClient}

@@ -15,8 +15,8 @@ const AudioRecorder = ({ fileName, summarizePhoneCall, dispatch }) => {
 
   const startRecording = async () => {
     try {
-      // const newFileName = `phone-audio-${Date.now()}.mp3`;
-      const newFileName = 'phone-audio.mp3';
+      const newFileName = `phone-audio-${Date.now()}.mp3`;
+      // const newFileName = 'phone-audio.mp3';
       currentFileName.current = newFileName;
       dispatch({ type: ACTIONS.SET_FILE_NAME, payload: newFileName });
 
