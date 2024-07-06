@@ -148,13 +148,9 @@ router.post("/transcribe-audio-file", async (req, res) => {
   try {
     const command = new StartTranscriptionJobCommand(transcribeParams);
     const data = await transcribeClient.send(command);
-    // res
-    //   .status(200)
-    //   .send(
-    //     `Transcription job started with name: ${data.TranscriptionJob.TranscriptionJobName}`
-    //   );
+
     res.status(200).json({
-      message: "Transcription job started successfully",
+      message: "Transcription job started",
       jobName: data.TranscriptionJob.TranscriptionJobName,
     });
   } catch (err) {
@@ -164,7 +160,7 @@ router.post("/transcribe-audio-file", async (req, res) => {
 });
 
 // Get transcription job status
-router.post("/transcribe-status", async (req, res) => {
+router.post("/transcription-status", async (req, res) => {
   const { jobName } = req.body;
 
   try {

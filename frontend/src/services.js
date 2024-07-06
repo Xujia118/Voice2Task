@@ -24,7 +24,7 @@ export function storeAudioToS3(blob, file) {
   return chainPromise(fetched);
 }
 
-// Convert audio to text
+// Convert audio to text: start transcription. But this only starts, we don't know when it ends
 export function transcribeAudioToText(audioFileName) {
   const fetched = fetch(`${API_BASE_URL}/api/transcribe-audio-file`, {
     method: "POST",
@@ -32,6 +32,18 @@ export function transcribeAudioToText(audioFileName) {
       "content-type": "application/json",
     },
     body: JSON.stringify({ audioFileName }),
+  });
+  return chainPromise(fetched);
+}
+
+// Get transcription status. But api will let us know when the transcription is finished
+export function fetchTranscriptionStatus(jobName) {
+  const fetched = fetch(`${API_BASE_URL}/api/transcription-status`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ jobName }),
   });
   return chainPromise(fetched);
 }

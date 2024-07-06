@@ -12,6 +12,7 @@ import {
   fetchGetSummaryList,
   fetchStoreSummary,
   fetchSummary,
+  fetchTranscriptionStatus,
   storeAudioToS3,
   transcribeAudioToText,
 } from "./services";
@@ -37,11 +38,10 @@ function App() {
     }
   };
 
-  // All service call take some time, so give retries with delay
   const isAudioUploaded = async (blob, file) => {
     try {
       const data = await storeAudioToS3(blob, file);
-      // dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
+      dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
       return data.message;
     } catch (err) {
       console.log(err);
@@ -50,20 +50,41 @@ function App() {
 
   const isTranscriptionComplete = async (
     fileName,
-    maxAttempts = 2,
-    delay = 15000
+    maxAttempts = 10,
+    delay = 10000
   ) => {
+    let jobName;
+
+    // Start transcription
+    try {
+      const data = await transcribeAudioToText(fileName);
+      jobName = data.jobName;
+      dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
+    } catch (err) {
+      console.log(err);
+      dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
+    }
+
+    // Get transcription status
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        const data = await transcribeAudioToText(fileName);
-        dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
-      } catch (error) {
-        console.error(`Attempt to trancribe ${attempt + 1} failed:`, error);
-        if (attempt < maxAttempts - 1) {
-          await new Promise((resolve) => setTimeout(resolve, delay));
+        const transcriptionStatus = await fetchTranscriptionStatus(jobName);
+
+        if (transcriptionStatus.status === "COMPLETED") {
+          return true;
         }
+
+        // Wait before next attempt
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      } catch (err) {
+        console.error(
+          `Transcription status check attempt ${attempt + 1} failed:`,
+          err
+        );
+        if (attempt === maxAttempts - 1) throw error;
       }
     }
+    throw new Error("Transcription timed out");
   };
 
   const onFetchGetClient = async (clientObj) => {
