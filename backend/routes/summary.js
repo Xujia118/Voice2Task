@@ -18,6 +18,7 @@ import {
 import {
   TranscribeClient,
   StartTranscriptionJobCommand,
+  GetTranscriptionJobCommand,
 } from "@aws-sdk/client-transcribe";
 
 // Anthropic import
@@ -130,7 +131,7 @@ router.post("/store-user-info", async (req, res) => {
   }
 });
 
-// Send a job from S3 to Transcribe and return the job to the original bucket
+// Start a transcription job from S3 to Transcribe
 router.post("/transcribe-audio-file", async (req, res) => {
   const { audioFileName } = req.body;
   const audioFileUri = `s3://${process.env.S3_BUCKET_NAME}/${audioFileName}`;
@@ -147,18 +148,40 @@ router.post("/transcribe-audio-file", async (req, res) => {
   try {
     const command = new StartTranscriptionJobCommand(transcribeParams);
     const data = await transcribeClient.send(command);
-    res
-      .status(200)
-      .send(
-        `Transcription job started with name: ${data.TranscriptionJob.TranscriptionJobName}`
-      ); 
-    // res.status(200).json({
-    //   message: "Transcription job started successfully",
-    //   jobName: data.TranscriptionJob.TranscriptionJobName,
-    // });
+    // res
+    //   .status(200)
+    //   .send(
+    //     `Transcription job started with name: ${data.TranscriptionJob.TranscriptionJobName}`
+    //   );
+    res.status(200).json({
+      message: "Transcription job started successfully",
+      jobName: data.TranscriptionJob.TranscriptionJobName,
+    });
   } catch (err) {
     console.log(err, err.stack);
     res.status(500).json({ error: "Error starting transcription job." });
+  }
+});
+
+// Get transcription job status
+router.post("/transcribe-status", async (req, res) => {
+  const { jobName } = req.body;
+
+  try {
+    const command = new GetTranscriptionJobCommand({
+      TranscriptionJobName: jobName,
+    });
+    const data = await transcribeClient.send(command);
+
+    res.json({
+      status: data.TranscriptionJob.TranscriptionJobStatus,
+      message: `Transcription job ${data.TranscriptionJob.TranscriptionJobStatus.toLowerCase()}`,
+    });
+  } catch (err) {
+    console.error("Error checking transcription status:", err);
+    res.status(500).json({
+      error: "Error checking transcription status",
+    });
   }
 });
 
