@@ -69,7 +69,7 @@ function Summary({ summary, clientData, onFetchStoreSummary }) {
           Save
         </Button>
       </form>
-      <Box>
+      <Box mt={2}>
         <p>{summary}</p>
       </Box>
     </>

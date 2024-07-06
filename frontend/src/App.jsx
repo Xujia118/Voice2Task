@@ -24,14 +24,13 @@ function App() {
   const summarizePhoneCall = async (fileName) => {
     try {
       await isTranscriptionComplete(fileName);
+      // await isAudioUploaded(fileName)
 
       // Wait three seconds to process summary
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
       const data = await fetchSummary(fileName);
-
       console.log("summary received:", data);
-
       dispatch({ type: ACTIONS.SUMMARIZE, payload: data.summary });
     } catch (err) {
       console.error(err);
@@ -39,23 +38,13 @@ function App() {
   };
 
   // All service call take some time, so give retries with delay
-  const isAudioUploaded = async (fileName, maxAttempts = 2, delay = 2000) => {
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      try {
-        const testpromise = await storeAudioToS3(fileName);
-
-        console.log("test promise:", testpromise);
-
-        console.log("attempts:", attempt);
-        return true;
-      } catch (error) {
-        console.error(`Attempt to upload ${attempt + 1} failed:`, error);
-        if (attempt < maxAttempts - 1) {
-          await new Promise((resolve) => setTimeout(resolve, delay));
-        }
-      }
+  const isAudioUploaded = async (blob, file) => {
+    try {
+      const data = await storeAudioToS3(blob, file);
+      // TODO: dispatch
+    } catch (err) {
+      console.log(err);
     }
-    return false;
   };
 
   const isTranscriptionComplete = async (
@@ -82,7 +71,7 @@ function App() {
       const data = await fetchGetClient(clientObj);
       dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
     } catch (err) {
-      dispatch({ type:ACTIONS.CLEAR_CLIENT_DATA })
+      dispatch({ type: ACTIONS.CLEAR_CLIENT_DATA });
       dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
     }
   };

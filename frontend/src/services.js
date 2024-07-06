@@ -12,9 +12,10 @@ function chainPromise(promise) {
 }
 
 // Store audio file to S3
-export function storeAudioToS3(file) {
+export function storeAudioToS3(blob, file) {
   const formData = new FormData();
-  formData.append("audioFile", file);
+  formData.append("audioFile", blob, file);
+  
   const fetched = fetch(`${API_BASE_URL}/api/store-audio-file`, {
     method: "POST",
     body: formData,
