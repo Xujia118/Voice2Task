@@ -128,7 +128,7 @@ router.post("/get-summary-list", async (req, res) => {
     return res.status(404).json({ error: "Client not found.", summaryList: [] })
   }
 
-  const client_id = client.client_id; 
+  const client_id = client.client_id;
 
   const q = `SELECT summary_text, created_at FROM summaries 
              INNER JOIN clients ON summaries.client_id = clients.client_id 
