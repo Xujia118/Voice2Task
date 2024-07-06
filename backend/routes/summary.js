@@ -63,8 +63,6 @@ router.post(
   async (req, res) => {
     const file = req.file;
 
-    console.log("loaded file", file);
-
     if (!file) {
       return res.status(400).send("No file uploaded.");
     }
@@ -82,9 +80,6 @@ router.post(
 
       //upload audio to s3 bucket
       const audioUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${file.originalname}`;
-
-      // Store audio url for later use 
-      // getSummaryAudioURL(audioUrl); 
 
       res.json({ message: "Audio uploaded successfully.", audioUrl });
     } catch (err) {
@@ -152,15 +147,18 @@ router.post("/transcribe-audio-file", async (req, res) => {
   try {
     const command = new StartTranscriptionJobCommand(transcribeParams);
     const data = await transcribeClient.send(command);
-    console.log(data);
     res
       .status(200)
       .send(
         `Transcription job started with name: ${data.TranscriptionJob.TranscriptionJobName}`
-      );
+      ); 
+    // res.status(200).json({
+    //   message: "Transcription job started successfully",
+    //   jobName: data.TranscriptionJob.TranscriptionJobName,
+    // });
   } catch (err) {
     console.log(err, err.stack);
-    res.status(500).json({ error: "Error starting transcription job." }); 
+    res.status(500).json({ error: "Error starting transcription job." });
   }
 });
 
@@ -220,10 +218,6 @@ router.get("/get-summary", async (req, res) => {
     });
 
     const summary = msg.content[0].text;
-
-    // Store summmary text for later use
-    // getSummaryText(summary);
-    console.log(summary)
     res.json({ summary });
   } catch (err) {
     console.error(err);

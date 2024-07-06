@@ -23,11 +23,11 @@ function App() {
 
   const summarizePhoneCall = async (blob, fileName) => {
     try {
-      await isAudioUploaded(blob, fileName)
-      await isTranscriptionComplete(fileName);
+      const uploadAudioMessage = await isAudioUploaded(blob, fileName);
 
-      // Wait three seconds to process summary
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      if (uploadAudioMessage === "Audio uploaded successfully.") {
+        await isTranscriptionComplete(fileName);
+      }
 
       const data = await fetchSummary(fileName);
       console.log("summary received:", data);
@@ -41,7 +41,8 @@ function App() {
   const isAudioUploaded = async (blob, file) => {
     try {
       const data = await storeAudioToS3(blob, file);
-      dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
+      // dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
+      return data.message;
     } catch (err) {
       console.log(err);
     }
@@ -49,8 +50,8 @@ function App() {
 
   const isTranscriptionComplete = async (
     fileName,
-    maxAttempts = 6,
-    delay = 10000
+    maxAttempts = 2,
+    delay = 15000
   ) => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {

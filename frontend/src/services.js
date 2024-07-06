@@ -44,9 +44,6 @@ export function fetchSummary(fileName) {
   const url = new URL(`${API_BASE_URL}/api/get-summary`);
   url.searchParams.append("fileName", fileName);
 
-  console.log("url:", url);
-  console.log("search params:", url.searchParams);
-
   const fetched = fetch(url);
   return chainPromise(fetched);
 }

@@ -4,7 +4,6 @@ import { ACTIONS } from "./constants";
 
 import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
 import { Box, Button, Stack } from "@mui/material";
-import { storeAudioToS3 } from "./services";
 
 const AudioRecorder = ({ fileName, summarizePhoneCall, dispatch }) => {
   const currentFileName = useRef(fileName);
