@@ -10,7 +10,6 @@ const listItems = [
 ];
 
 function Conversation({
-  tab,
   fileName,
   summarizePhoneCall,
   switchTab,

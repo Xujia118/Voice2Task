@@ -39,7 +39,7 @@ function App() {
   };
 
   // All service call take some time, so give retries with delay
-  const isAudioIsUploaded = async (fileName, maxAttempts = 2, delay = 2000) => {
+  const isAudioUploaded = async (fileName, maxAttempts = 2, delay = 2000) => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
         const testpromise = await storeAudioToS3(fileName);

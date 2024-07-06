@@ -6,7 +6,7 @@ import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
 import { Box, Button, Stack } from "@mui/material";
 import { storeAudioToS3 } from "./services";
 
-const AudioRecorder = ({ fileName, summarizePhoneCall, switchTab, dispatch }) => {
+const AudioRecorder = ({ fileName, summarizePhoneCall, dispatch }) => {
   const currentFileName = useRef(fileName);
   
   const [recordedUrl, setRecordedUrl] = useState("");
@@ -65,8 +65,6 @@ const AudioRecorder = ({ fileName, summarizePhoneCall, switchTab, dispatch }) =>
     // Trigger the entire summary logic and set the tab to summary
     summarizePhoneCall(currentFileName.current);
     
-    // TODO: switch tab 
-    switchTab(1)
   };
 
   const uploadToS3 = async (blob, newFileName) => {
