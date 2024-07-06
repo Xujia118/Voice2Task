@@ -43,9 +43,8 @@ const AudioRecorder = ({ fileName, summarizePhoneCall, dispatch }) => {
         setRecordedUrl(url);
         chunks.current = [];
 
-        // Upload recorded audio to backend and then to S3
-        storeAudioToS3(recordedBlob, currentFileName.current);
-
+        // Trigger the entire summary logic
+        summarizePhoneCall(recordedBlob, currentFileName.current);
       };
       mediaRecorder.current.start();
     } catch (error) {
@@ -62,9 +61,6 @@ const AudioRecorder = ({ fileName, summarizePhoneCall, dispatch }) => {
         track.stop();
       });
     }
-
-    // Trigger the entire summary logic
-    summarizePhoneCall(currentFileName.current);
   };
 
   return (

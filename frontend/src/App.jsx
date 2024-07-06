@@ -21,10 +21,10 @@ import "./App.css";
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const summarizePhoneCall = async (fileName) => {
+  const summarizePhoneCall = async (blob, fileName) => {
     try {
+      await isAudioUploaded(blob, fileName)
       await isTranscriptionComplete(fileName);
-      // await isAudioUploaded(fileName)
 
       // Wait three seconds to process summary
       await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -49,7 +49,7 @@ function App() {
 
   const isTranscriptionComplete = async (
     fileName,
-    maxAttempts = 10,
+    maxAttempts = 6,
     delay = 10000
   ) => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
