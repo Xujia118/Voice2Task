@@ -12,9 +12,10 @@ function chainPromise(promise) {
 }
 
 // Store audio file to S3
-export function storeAudioToS3(file) {
+export function storeAudioToS3(blob, file) {
   const formData = new FormData();
-  formData.append("audioFile", file);
+  formData.append("audioFile", blob, file);
+  
   const fetched = fetch(`${API_BASE_URL}/api/store-audio-file`, {
     method: "POST",
     body: formData,
@@ -23,7 +24,7 @@ export function storeAudioToS3(file) {
   return chainPromise(fetched);
 }
 
-// Convert audio to text
+// Convert audio to text: start transcription. But this only starts, we don't know when it ends
 export function transcribeAudioToText(audioFileName) {
   const fetched = fetch(`${API_BASE_URL}/api/transcribe-audio-file`, {
     method: "POST",
@@ -35,16 +36,25 @@ export function transcribeAudioToText(audioFileName) {
   return chainPromise(fetched);
 }
 
+// Get transcription status. But api will let us know when the transcription is finished
+export function fetchTranscriptionStatus(jobName) {
+  const fetched = fetch(`${API_BASE_URL}/api/transcription-status`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ jobName }),
+  });
+  return chainPromise(fetched);
+}
+
 // Get summary
 export function fetchSummary(fileName) {
-  //   const fetched = fetch(`${BACKEND_URL}/api/get-summary`);
+  //   const fetched = fetch(`${API_BASE_URL}/api/get-summary`);
   //   return chainPromise(fetched);
 
   const url = new URL(`${API_BASE_URL}/api/get-summary`);
   url.searchParams.append("fileName", fileName);
-
-  console.log("url:", url);
-  console.log("search params:", url.searchParams);
 
   const fetched = fetch(url);
   return chainPromise(fetched);

@@ -12,6 +12,7 @@ import {
   fetchGetSummaryList,
   fetchStoreSummary,
   fetchSummary,
+  fetchTranscriptionStatus,
   storeAudioToS3,
   transcribeAudioToText,
 } from "./services";
@@ -21,64 +22,87 @@ import "./App.css";
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const switchTab = (value) => {
-    dispatch({ type: "SET_TAB", payload: value });
-  };
-
-  const summarizePhoneCall = async (fileName) => {
+  const summarizePhoneCall = async (blob, fileName) => {
     try {
-      await isTranscriptionComplete(fileName);
+      const uploadAudioMessage = await isAudioUploaded(blob, fileName);
 
-      // Wait three seconds to process summary
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      if (uploadAudioMessage !== "Audio uploaded successfully.") {
+        throw new Error("Audio upload failed");
+      }
+
+      const transcriptionComplete = await isTranscriptionComplete(fileName);
+
+      if (!transcriptionComplete) {
+        throw new Error("Transcription did not complete successfully");
+      }
 
       const data = await fetchSummary(fileName);
-
       console.log("summary received:", data);
-
+      if (data) {
+        dispatch({
+          type: ACTIONS.LOADING_STATUS,
+          payload: "Summary delivered!",
+        });
+      }
       dispatch({ type: ACTIONS.SUMMARIZE, payload: data.summary });
     } catch (err) {
       console.error(err);
+      dispatch({ type: ACTIONS.ERROR, payload: err.message });
     }
   };
 
-  // All service call take some time, so give retries with delay
-  const isAudioIsUploaded = async (fileName, maxAttempts = 2, delay = 2000) => {
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      try {
-        const testpromise = await storeAudioToS3(fileName);
-
-        console.log("test promise:", testpromise);
-
-        console.log("attempts:", attempt);
-        return true;
-      } catch (error) {
-        console.error(`Attempt to upload ${attempt + 1} failed:`, error);
-        if (attempt < maxAttempts - 1) {
-          await new Promise((resolve) => setTimeout(resolve, delay));
-        }
-      }
+  const isAudioUploaded = async (blob, file) => {
+    try {
+      const data = await storeAudioToS3(blob, file);
+      dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
+      dispatch({ type: ACTIONS.FETCH_AUDIO_URL, payload: data.audioUrl });
+      return data.message;
+    } catch (err) {
+      console.log(err);
     }
-    return false;
   };
 
   const isTranscriptionComplete = async (
     fileName,
-    maxAttempts = 6,
+    maxAttempts = 10,
     delay = 10000
   ) => {
+    let jobName;
+
+    // Start transcription
+    try {
+      const data = await transcribeAudioToText(fileName);
+      jobName = data.jobName;
+      dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
+    } catch (err) {
+      console.log(err);
+      dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
+    }
+
+    // Get transcription status
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        await transcribeAudioToText(fileName);
-        return true;
-      } catch (error) {
-        console.error(`Attempt to trancribe ${attempt + 1} failed:`, error);
-        if (attempt < maxAttempts - 1) {
-          await new Promise((resolve) => setTimeout(resolve, delay));
+        const transcriptionStatus = await fetchTranscriptionStatus(jobName);
+
+        if (transcriptionStatus.status === "COMPLETED") {
+          dispatch({
+            type: ACTIONS.LOADING_STATUS,
+            payload: "Transcription successful. Summarizing...",
+          });
+          return true;
         }
+
+        // Wait before next attempt
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      } catch (err) {
+        console.error(
+          `Transcription status check attempt ${attempt + 1} failed:`,
+          err
+        );
+        if (attempt === maxAttempts - 1) throw err;
       }
     }
-    return false;
+    throw new Error("Transcription timed out");
   };
 
   const onFetchGetClient = async (clientObj) => {
@@ -86,8 +110,7 @@ function App() {
       const data = await fetchGetClient(clientObj);
       dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
     } catch (err) {
-      console.log(err);
-      dispatch({ type:ACTIONS.CLEAR_CLIENT_DATA })
+      dispatch({ type: ACTIONS.CLEAR_CLIENT_DATA });
       dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
     }
   };
@@ -116,7 +139,6 @@ function App() {
       const data = await fetchGetSummaryList(clientObj);
       dispatch({ type: ACTIONS.FETCH_SUMMARY_LIST, payload: data.summaryList });
     } catch (err) {
-      console.log(err);
       dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
     }
   };
@@ -126,9 +148,8 @@ function App() {
       <Header />
       <WorkBench
         dispatch={dispatch}
-        tab={state.tab}
-        switchTab={switchTab}
         fileName={state.fileName}
+        audioUrl={state.audioUrl}
         summarizePhoneCall={summarizePhoneCall}
         summary={state.newSummary}
         onFetchGetClient={onFetchGetClient}
@@ -137,6 +158,7 @@ function App() {
         onFetchSummaryList={onFetchSummaryList}
         clientData={state.clientData}
         allSummaries={state.allSummaries}
+        loadingStatus={state.loadingStatus}
         error={state.error}
       />
     </>

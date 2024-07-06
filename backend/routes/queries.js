@@ -5,7 +5,6 @@ import express from "express";
 const router = express.Router();
 
 import db from "../db.js";
-// import { getSummaryInfo } from "./utils.js";
 
 // Helper functions
 async function findClient({ name, phone }) {
@@ -26,7 +25,6 @@ async function createClient({ name, phone, email }) {
 
   try {
     const [result] = await db.query(q, [name, phone, email]);
-    console.log("Client created", result.insertId);
     return result.insertId;
   } catch (err) {
     console.error("Error creating client:", err);
@@ -110,7 +108,6 @@ router.post("/store-summary", async (req, res) => {
     }
 
     const result = await createSummary({ summary_text, url, client_id });
-    console.log("result:", result.insertId);
     res.status(201).json({ messge: "Summary created successfully." });
   } catch (err) {
     console.error("Error creating summary:", err);

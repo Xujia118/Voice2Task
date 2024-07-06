@@ -3,7 +3,7 @@ import { Box, Button, TextField } from "@mui/material";
 
 const clientDetails = ["name", "phone"];
 
-function Summary({ summary, clientData, onFetchStoreSummary }) {
+function Summary({ summary, audioUrl, clientData, onFetchStoreSummary }) {
   const [localClientData, setLocalClientData] = useState({
     name: "",
     phone: "",
@@ -31,7 +31,7 @@ function Summary({ summary, clientData, onFetchStoreSummary }) {
       const updatedClientData = {
         ...clientData,
         summary_text: summary,
-        url: "URLPlacerholder",
+        url: audioUrl,
       };
       console.log(updatedClientData);
       onFetchStoreSummary(updatedClientData);
@@ -42,12 +42,12 @@ function Summary({ summary, clientData, onFetchStoreSummary }) {
     const updatedLocalClientData = {
       ...localClientData,
       summary_text: summary,
-      url: "URLPlaceholder", // To change
+      url: audioUrl, 
     };
     console.log(updatedLocalClientData);
     onFetchStoreSummary(updatedLocalClientData);
 
-    // TODO: Add validation
+    // TODO: Add validation that forbids empty strings
   };
 
   return (
@@ -69,7 +69,7 @@ function Summary({ summary, clientData, onFetchStoreSummary }) {
           Save
         </Button>
       </form>
-      <Box>
+      <Box mt={2}>
         <p>{summary}</p>
       </Box>
     </>

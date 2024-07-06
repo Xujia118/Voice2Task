@@ -1,14 +1,15 @@
 import { ACTIONS } from "./constants";
 
 export const initialState = {
-  tab: 0,
   fileName: "",
   loading_summary: false,
   newSummary: "",
   clientData: [],
-  allSummaries: [], 
+  allSummaries: [],
   error: "",
   message: "",
+  loadingStatus: "",
+  audioUrl: "",
 };
 
 export function reducer(state, action) {
@@ -19,13 +20,26 @@ export function reducer(state, action) {
         fileName: action.payload,
       };
 
+    case ACTIONS.FETCH_AUDIO_URL:
+      return {
+        ...state,
+        audioUrl: action.payload,
+      };
+
     case ACTIONS.REPORT_ERROR:
       return {
         ...state,
-        error: action.payload
-      }
+        error: action.payload,
+      };
 
-      // To fix
+    case ACTIONS.LOADING_STATUS:
+      return {
+        ...state,
+        loadingStatus: action.payload,
+        // sending audio, converting audio, summarizing
+      };
+
+    // To fix
     case ACTIONS.PICKUP_PHONE:
       return {
         ...state,
@@ -49,22 +63,22 @@ export function reducer(state, action) {
     case ACTIONS.CLEAR_CLIENT_DATA:
       return {
         ...state,
-        clientData: []
-      }
+        clientData: [],
+      };
 
     // store summary
     case ACTIONS.STORE_SUMMARY:
       return {
         ...state,
-        message: action.payload
-      }
+        message: action.payload,
+      };
 
     case ACTIONS.FETCH_SUMMARY_LIST:
       return {
         ...state,
         error: "",
-        allSummaries: action.payload
-      }
+        allSummaries: action.payload,
+      };
 
     default:
       return state;

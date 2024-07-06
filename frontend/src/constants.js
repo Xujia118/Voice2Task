@@ -10,4 +10,6 @@ export const ACTIONS = {
     STORE_SUMMARY: "store summary",
     FETCH_SUMMARY_LIST: "fetch summary list",
     REPORT_ERROR: "report error",
+    LOADING_STATUS: "loading status",
+    FETCH_AUDIO_URL:"fetch audio url",
 }
