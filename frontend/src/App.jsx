@@ -41,7 +41,7 @@ function App() {
   const isAudioUploaded = async (blob, file) => {
     try {
       const data = await storeAudioToS3(blob, file);
-      // TODO: dispatch
+      dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
     } catch (err) {
       console.log(err);
     }
@@ -49,13 +49,13 @@ function App() {
 
   const isTranscriptionComplete = async (
     fileName,
-    maxAttempts = 6,
+    maxAttempts = 10,
     delay = 10000
   ) => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        await transcribeAudioToText(fileName);
-        return true;
+        const data = await transcribeAudioToText(fileName);
+        dispatch({ type: ACTIONS.LOADING_STATUS, payload: data.message });
       } catch (error) {
         console.error(`Attempt to trancribe ${attempt + 1} failed:`, error);
         if (attempt < maxAttempts - 1) {
@@ -63,7 +63,6 @@ function App() {
         }
       }
     }
-    return false;
   };
 
   const onFetchGetClient = async (clientObj) => {

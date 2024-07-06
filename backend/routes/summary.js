@@ -160,7 +160,7 @@ router.post("/transcribe-audio-file", async (req, res) => {
       );
   } catch (err) {
     console.log(err, err.stack);
-    res.status(500).json({ error: "Error starting transcription job." });
+    res.status(500).json({ error: "Error starting transcription job." }); 
   }
 });
 
