@@ -12,8 +12,8 @@ const listItems = [
 function Conversation({
   fileName,
   summarizePhoneCall,
-  switchTab,
   dispatch,
+  loadingStatus,
 }) {
   return (
     <div>
@@ -30,7 +30,7 @@ function Conversation({
         dispatch={dispatch}
         fileName={fileName}
         summarizePhoneCall={summarizePhoneCall}
-        switchTab={switchTab}
+        loadingStatus={loadingStatus}
       />
     </div>
   );

@@ -38,6 +38,12 @@ function App() {
 
       const data = await fetchSummary(fileName);
       console.log("summary received:", data);
+      if (data) {
+        dispatch({
+          type: ACTIONS.LOADING_STATUS,
+          payload: "Summary delivered!",
+        });
+      }
       dispatch({ type: ACTIONS.SUMMARIZE, payload: data.summary });
     } catch (err) {
       console.error(err);
@@ -79,6 +85,10 @@ function App() {
         const transcriptionStatus = await fetchTranscriptionStatus(jobName);
 
         if (transcriptionStatus.status === "COMPLETED") {
+          dispatch({
+            type: ACTIONS.LOADING_STATUS,
+            payload: "Transcription successful. Summarizing...",
+          });
           return true;
         }
 
@@ -148,6 +158,7 @@ function App() {
         onFetchSummaryList={onFetchSummaryList}
         clientData={state.clientData}
         allSummaries={state.allSummaries}
+        loadingStatus={state.loadingStatus}
         error={state.error}
       />
     </>

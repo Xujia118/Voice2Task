@@ -5,9 +5,14 @@ import { ACTIONS } from "./constants";
 import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
 import { Box, Button, Stack } from "@mui/material";
 
-const AudioRecorder = ({ fileName, summarizePhoneCall, dispatch }) => {
+const AudioRecorder = ({
+  fileName,
+  summarizePhoneCall,
+  dispatch,
+  loadingStatus,
+}) => {
   const currentFileName = useRef(fileName);
-  
+
   const [recordedUrl, setRecordedUrl] = useState("");
   const mediaStream = useRef(null);
   const mediaRecorder = useRef(null);
@@ -16,7 +21,6 @@ const AudioRecorder = ({ fileName, summarizePhoneCall, dispatch }) => {
   const startRecording = async () => {
     try {
       const newFileName = `phone-audio-${Date.now()}.mp3`;
-      // const newFileName = 'phone-audio.mp3';
       currentFileName.current = newFileName;
       dispatch({ type: ACTIONS.SET_FILE_NAME, payload: newFileName });
 
@@ -66,6 +70,7 @@ const AudioRecorder = ({ fileName, summarizePhoneCall, dispatch }) => {
     <Box
       sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
+      <p>{loadingStatus}</p>
       <audio controls src={recordedUrl} />
       <Stack direction={"row"} spacing={2}>
         <Button

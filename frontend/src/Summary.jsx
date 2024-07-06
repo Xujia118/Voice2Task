@@ -42,12 +42,12 @@ function Summary({ summary, audioUrl, clientData, onFetchStoreSummary }) {
     const updatedLocalClientData = {
       ...localClientData,
       summary_text: summary,
-      url: "URLPlaceholder", // To change
+      url: audioUrl, 
     };
     console.log(updatedLocalClientData);
     onFetchStoreSummary(updatedLocalClientData);
 
-    // TODO: Add validation
+    // TODO: Add validation that forbids empty strings
   };
 
   return (
