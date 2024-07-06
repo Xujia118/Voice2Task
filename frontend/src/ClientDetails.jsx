@@ -2,15 +2,29 @@ import { useState } from "react";
 
 import { ACTIONS } from "./constants";
 
-import { Button, Divider, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Divider,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
+import { Margin } from "@mui/icons-material";
 
-const clientDetails = ["Name", "Phone", "Email", "Address"];
+const clientDetails = ["name", "phone"];
 
-function ClientDetails({ dispatch, clientData, onFetchClientData }) {
+function ClientDetails({
+  dispatch,
+  clientData,
+  onFetchGetClient,
+  onFetchSummaryList,
+  error,
+}) {
   const [localClientData, setLocalClientData] = useState({
     name: "",
-    phoneNumber: "",
+    phone: "",
   });
 
   const handleChange = (e) => {
@@ -25,29 +39,32 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
     e.preventDefault();
 
     // send the client data object to backend for query
-    console.log(localClientData);
-    onFetchClientData(localClientData);
-
-    dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: localClientData });
+    onFetchGetClient(localClientData);
+    onFetchSummaryList(localClientData);
 
     // Clear form at submit
     setLocalClientData({
       name: "",
-      phoneNumber: "",
+      phone: "",
     });
   };
 
   return (
     <>
       <Typography variant="h6" p={1} sx={{ textAlign: "center" }}>
-        Placerholder
+        Query Client
       </Typography>
-      <Box height={250}>
-        {Object.keys(clientData).map((item) => (
-          <li key={item}>{item}</li>
-        ))}
+      <Box height={250} mt={2}>
+        {error ? (
+          <p style={{ marginLeft: "1rem" }}>{error}</p>
+        ) : (
+          Object.entries(clientData).map(([label, item]) => (
+            <ListItem key={label}>
+              <ListItemText primary={`${label}: ${item}`} />
+            </ListItem>
+          ))
+        )}
       </Box>
-      <Divider />
       <Box>
         <form onSubmit={handleSubmit}>
           {clientDetails.map((detail) => (
@@ -63,14 +80,16 @@ function ClientDetails({ dispatch, clientData, onFetchClientData }) {
                 name={detail}
                 id={detail}
                 label={detail}
-                // value={clientData[detail]}
+                value={localClientData[detail]}
                 onChange={handleChange}
               ></TextField>
             </Box>
           ))}
-          <Button variant="contained" type="submit">
-            Query
-          </Button>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button variant="contained" type="submit">
+              Query
+            </Button>
+          </Box>
         </form>
       </Box>
     </>

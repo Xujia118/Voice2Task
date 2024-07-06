@@ -5,24 +5,27 @@ export const initialState = {
   fileName: "",
   loading_summary: false,
   newSummary: "",
-  allSummaries: [], // singleit out although it's part of clientData obj as client data obj might change
-  clientData: {},
+  clientData: [],
+  allSummaries: [], 
+  error: "",
+  message: "",
 };
 
 export function reducer(state, action) {
   switch (action.type) {
-    case ACTIONS.SET_TAB:
-      return {
-        ...state,
-        tab: action.payload,
-      };
-
     case ACTIONS.SET_FILE_NAME:
       return {
         ...state,
         fileName: action.payload,
       };
 
+    case ACTIONS.REPORT_ERROR:
+      return {
+        ...state,
+        error: action.payload
+      }
+
+      // To fix
     case ACTIONS.PICKUP_PHONE:
       return {
         ...state,
@@ -31,15 +34,37 @@ export function reducer(state, action) {
     case ACTIONS.SUMMARIZE:
       return {
         ...state,
+        error: "",
         newSummary: action.payload,
       };
 
+    // get client
     case ACTIONS.FETCH_CLIENT_DATA:
       return {
         ...state,
+        error: "",
         clientData: action.payload,
-        allSummaries: action.payload, // To add .summaries 
       };
+
+    case ACTIONS.CLEAR_CLIENT_DATA:
+      return {
+        ...state,
+        clientData: []
+      }
+
+    // store summary
+    case ACTIONS.STORE_SUMMARY:
+      return {
+        ...state,
+        message: action.payload
+      }
+
+    case ACTIONS.FETCH_SUMMARY_LIST:
+      return {
+        ...state,
+        error: "",
+        allSummaries: action.payload
+      }
 
     default:
       return state;

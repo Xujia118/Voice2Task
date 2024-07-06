@@ -2,99 +2,144 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-// import mysql from "mysql2/promise";
-
 const router = express.Router();
 
-// MySQL connection
-// const db = await mysql.createConnection({
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-// });
+import db from "../db.js";
+// import { getSummaryInfo } from "./utils.js";
 
-// Write these helper functions
-// User you previous logic in api
-async function findClient(clientObj) {}
-
-async function createClient(clientObj) {}
-
-async function updateClient(clientObj) {}
-
-// Get client data. 
-// We must use post because we send client data in req.body
-router.post("/user-data", async (req, res) => {
-  const { clientObj } = req.body;
-
-  console.log(clientObj);
+// Helper functions
+async function findClient({ name, phone }) {
+  const q = "SELECT * FROM clients WHERE name = ? AND phone = ?";
 
   try {
-    let clientData = await findClient(clientObj);
-
-    if (!clientData) {
-      // If client doesn't exist, create a new one
-      clientData = await createClient(clientObj);
-      res.status(201).json({ message: "Client created", clientData });
-    } else {
-      // If client exists, update with new data
-      const updatedData = {};
-      for (const key in clientObj) {
-        if (clientObj[key] !== clientData[key]) {
-          updatedData[key] = clientObj[key];
-        }
-      }
-
-      if (Object.keys(updatedData).length > 0) {
-        clientData = await updateClient(clientData.id, updatedData);
-        res.status(200).json({ message: "Client updated", clientData });
-      } else {
-        res.status(200).json({ message: "No changes needed", clientData });
-      }
-    }
+    const [rows] = await db.query(q, [name, phone]);
+    // console.log("client query:", rows)
+    return rows[0];
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Error executing query:", err);
+    throw err;
+  }
+}
+
+async function createClient({ name, phone, email }) {
+  const q = "INSERT INTO clients (name, phone, email) VALUES (?, ?, ?)";
+
+  try {
+    const [result] = await db.query(q, [name, phone, email]);
+    console.log("Client created", result.insertId);
+    return result.insertId;
+  } catch (err) {
+    console.error("Error creating client:", err);
+    throw err;
+  }
+}
+
+async function createSummary({ summary_text, url, client_id }) {
+  const q =
+    "INSERT INTO summaries (summary_text, url, client_id) VALUES (?, ?, ?)";
+
+  try {
+    const [result] = await db.query(q, [summary_text, url, client_id]);
+    return result;
+  } catch (err) {
+    console.error("Error creating summary:", err);
+    throw err;
+  }
+}
+
+// Get a client. Since we send in body, we use POST
+router.post("/get-client", async (req, res) => {
+  const { name, phone } = req.body;
+
+  if (!name || !phone) {
+    return res.status(400).json({ error: "Name and phone are required." });
+  }
+
+  try {
+    const client = await findClient({ name, phone });
+
+    if (!client) {
+      return res.status(404).json({ clientData: [], error: "Client not found" });
+    }
+
+    return res.json({ clientData: client, message: "Client found" });
+  } catch (err) {
+    console.error("Error fetching client data:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// post summary file to tables
-router.post("/store-user-summary", async (req, res) => {
-  const { name, phoneNumber, summary } = req.body;
+// Create a new client
+router.post("/create-client", async (req, res) => {
+  const { name, phone, email } = req.body;
+
+  if (!name || !phone) {
+    return res.status(400).json({ error: "Name and phone are required." });
+  }
 
   try {
-    const [existingRows] = await db.execute(
-      "SELECT * FROM Users WHERE username = ? AND phone_number = ?",
-      [name, phoneNumber]
-    );
-
-    if (existingRows.length > 0) {
-      const existingUser = existingRows[0];
-      const updatedFiles = existingUser.summary_files
-        ? `${existingUser.summary_files}, ${summary}`
-        : summary;
-
-      await db.execute(
-        "UPDATE Users SET summary_files = ? WHERE username = ? AND phone_number = ?",
-        [updatedFiles, name, phoneNumber]
-      );
-
-      res
-        .status(200)
-        .json({ message: "add summary to users table successfully." });
-    } else {
-      await db.execute(
-        "INSERT INTO Users (username, phone_number, summary_files) VALUES (?, ?, ?)",
-        [name, phoneNumber, summary]
-      );
-      res
-        .status(200)
-        .json({ message: "New user created with sumary successfully." });
+    const client_id = await createClient({ name, phone, email });
+    if (!client_id) {
+      return res.status(500).json({ error: "Failed to create client." });
     }
-  } catch (err) {
-    console.error(err);
+
     res
-      .status(500)
-      .json({ message: "Error storing or updating user information." });
+      .status(201)
+      .json({ message: "Client created successfully.", client_id });
+  } catch (err) {
+    console.error("Error creating client:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Create a new summary: summary needs a foreign key, which is client_id
+// So we need to first find the client;
+// if client doesn't exist, we have to creat a new one
+// then we create summary with the client_id
+router.post("/store-summary", async (req, res) => {
+  const { name, phone, summary_text, url } = req.body;
+
+  try {
+    let client_id;
+
+    const client = await findClient({ name, phone });
+    if (client) {
+      client_id = client.client_id;
+    } else {
+      client_id = await createClient({ name, phone });
+    }
+
+    const result = await createSummary({ summary_text, url, client_id });
+    console.log("result:", result.insertId);
+    res.status(201).json({ messge: "Summary created successfully." });
+  } catch (err) {
+    console.error("Error creating summary:", err);
+    res.status(500).json({ error: "Error creating summary" });
+  }
+});
+
+// Get all summaries of a client
+router.post("/get-summary-list", async (req, res) => {
+  const { name, phone } = req.body;
+
+  const client = await findClient({ name, phone });
+  
+  if (!client) {
+    return res.status(404).json({ error: "Client not found.", summaryList: [] })
+  }
+
+  const client_id = client.client_id;
+
+  const q = `SELECT summary_text, created_at FROM summaries 
+             INNER JOIN clients ON summaries.client_id = clients.client_id 
+             WHERE clients.client_id = ?`;
+  try {
+    const result = await db.query(q, [client_id]);
+    const summaryList = result[0]
+    res.json({ summaryList });
+  } catch (err) {
+    console.error("Error fetching summary list:", err);
+    res.status(500).json({ error: "Error fetching summary list" });
   }
 });
 

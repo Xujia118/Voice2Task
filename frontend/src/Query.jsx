@@ -1,25 +1,56 @@
-import { Button } from "@mui/material";
 import { useEffect } from "react";
+import { List, ListItem, ListItemText, Typography } from "@mui/material";
 
-function Query({ allSummaries, clientData, onFetchClientData }) {
-  if (!allSummaries) {
-    return <p>No records</p>;
-  }
-
-  // Every time this tab is loaded, update client state to get summary list
+function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
   useEffect(() => {
-    onFetchClientData(clientData);
+    if (clientData.length > 0) {
+      onFetchSummaryList(clientData);
+    }
   }, []);
 
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  if (allSummaries.length === 0) {
+    return <p>No summary is found.</p>;
+  }
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      month: "long",
+      day: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    };
+    return date.toLocaleDateString("en-US", options).replace(",", "");
+  };
+
   return (
-    <div>
-      <Button variant="contained">View client history</Button>
-      <ul>
-        {allSummaries.map((summary) => (
-          <li>{summary}</li>
-        ))}
-      </ul>
-    </div>
+    <List>
+      {allSummaries
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .map((listObj, index) => {
+          const formattedDate = formatDate(listObj.created_at);
+          return (
+            <ListItem key={index}>
+              <ListItemText
+                primary={
+                  <Typography variant="body1">{formattedDate}</Typography>
+                }
+                secondary={
+                  <Typography variant="body1">
+                    {listObj.summary_text}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          );
+        })}
+    </List>
   );
 }
 

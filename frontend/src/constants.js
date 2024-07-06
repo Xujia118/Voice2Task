@@ -5,5 +5,9 @@ export const ACTIONS = {
     END_PHONE: "end phone",
     SUMMARIZE: "Summarize",
     FETCH_CLIENT_DATA: "fetch client data",
-    QUERY: "query" // TO DECIDE
+    CLEAR_CLIENT_DATA: "clear client data",
+    CREATE_CLIENT: "create client",
+    STORE_SUMMARY: "store summary",
+    FETCH_SUMMARY_LIST: "fetch summary list",
+    REPORT_ERROR: "report error",
 }

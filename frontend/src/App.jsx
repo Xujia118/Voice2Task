@@ -7,7 +7,10 @@ import WorkBench from "./WorkBench";
 import Header from "./Header";
 
 import {
-  fetchClientData,
+  fetchCreateClient,
+  fetchGetClient,
+  fetchGetSummaryList,
+  fetchStoreSummary,
   fetchSummary,
   storeAudioToS3,
   transcribeAudioToText,
@@ -27,10 +30,13 @@ function App() {
       await isTranscriptionComplete(fileName);
 
       // Wait three seconds to process summary
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const summaryData = await fetchSummary(fileName);
-      dispatch({ type: ACTIONS.SUMMARIZE, payload: summaryData.summary });
+      const data = await fetchSummary(fileName);
+
+      console.log("summary received:", data);
+
+      dispatch({ type: ACTIONS.SUMMARIZE, payload: data.summary });
     } catch (err) {
       console.error(err);
     }
@@ -75,14 +81,45 @@ function App() {
     return false;
   };
 
-  const onFetchClientData = async (clientObj) => {
+  const onFetchGetClient = async (clientObj) => {
     try {
-      const data = await fetchClientData(clientObj);
+      const data = await fetchGetClient(clientObj);
       dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
-    } catch(err) {
+    } catch (err) {
+      console.log(err);
+      dispatch({ type:ACTIONS.CLEAR_CLIENT_DATA })
+      dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
+    }
+  };
+
+  const onFetchCreateClient = async (clientObj) => {
+    try {
+      const data = await fetchCreateClient(clientObj);
+      dispatch({ type: ACTIONS.CREATE_CLIENT, payload: data.client_id });
+    } catch (err) {
       console.log(err);
     }
-  }
+  };
+
+  const onFetchStoreSummary = async (clientObj) => {
+    try {
+      const data = await fetchStoreSummary(clientObj);
+      console.log("data:", data);
+      dispatch({ type: ACTIONS.STORE_SUMMARY, payload: data.message });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const onFetchSummaryList = async (clientObj) => {
+    try {
+      const data = await fetchGetSummaryList(clientObj);
+      dispatch({ type: ACTIONS.FETCH_SUMMARY_LIST, payload: data.summaryList });
+    } catch (err) {
+      console.log(err);
+      dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
+    }
+  };
 
   return (
     <>
@@ -93,10 +130,14 @@ function App() {
         switchTab={switchTab}
         fileName={state.fileName}
         summarizePhoneCall={summarizePhoneCall}
-        summary={state.newSmmary}
-        allSummaries={state.allSummaries}
+        summary={state.newSummary}
+        onFetchGetClient={onFetchGetClient}
+        onFetchCreateClient={onFetchCreateClient}
+        onFetchStoreSummary={onFetchStoreSummary}
+        onFetchSummaryList={onFetchSummaryList}
         clientData={state.clientData}
-        onFetchClientData={onFetchClientData}
+        allSummaries={state.allSummaries}
+        error={state.error}
       />
     </>
   );

@@ -48,7 +48,11 @@ function WorkBench({
   allSummaries,
   dispatch,
   clientData,
-  onFetchClientData,
+  onFetchGetClient,
+  onFetchCreateClient,
+  onFetchStoreSummary,
+  onFetchSummaryList,
+  error
 }) {
   const [value, setValue] = useState(0);
 
@@ -64,7 +68,9 @@ function WorkBench({
             sx={{ flex: 1 }}
             dispatch={dispatch}
             clientData={clientData}
-            onFetchClientData={onFetchClientData}
+            onFetchGetClient={onFetchGetClient}
+            onFetchSummaryList={onFetchSummaryList}
+            error={error}
           />
         </Box>
         <Box sx={{ flex: 3 }}>
@@ -77,7 +83,7 @@ function WorkBench({
               >
                 <Tab label="conversation" {...a11yProps(0)} />
                 <Tab label="summary" {...a11yProps(1)} />
-                <Tab label="logs" {...a11yProps(2)} />
+                <Tab label="history" {...a11yProps(2)} />
               </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
@@ -87,19 +93,26 @@ function WorkBench({
                 fileName={fileName}
                 summarizePhoneCall={summarizePhoneCall}
                 switchTab={switchTab}
+                error={error}
               />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
               <Summary
+                dispatch={dispatch}
                 summary={summary}
-                onFetchClientData={onFetchClientData}
+                clientData={clientData}
+                onFetchGetClient={onFetchGetClient}
+                onFetchCreateClient={onFetchCreateClient}
+                onFetchStoreSummary={onFetchStoreSummary}
+                error={error}
               />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
               <Query
-                allSummaries={allSummaries}
                 clientData={clientData}
-                onFetchClientData={onFetchClientData}
+                allSummaries={allSummaries}
+                onFetchSummaryList={onFetchSummaryList}
+                error={error}
               />
             </CustomTabPanel>
           </Box>
