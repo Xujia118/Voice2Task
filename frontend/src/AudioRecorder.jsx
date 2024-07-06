@@ -6,7 +6,7 @@ import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
 import { Box, Button, Stack } from "@mui/material";
 import { storeAudioToS3 } from "./services";
 
-const AudioRecorder = ({ tab, fileName, summarizePhoneCall, switchTab, dispatch }) => {
+const AudioRecorder = ({ fileName, summarizePhoneCall, switchTab, dispatch }) => {
   const currentFileName = useRef(fileName);
   
   const [recordedUrl, setRecordedUrl] = useState("");

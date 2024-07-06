@@ -1,9 +1,6 @@
-import React from "react";
 import AudioRecorder from "./AudioRecorder";
 
-import Box from "@mui/material/Box";
-
-import { List, ListItem, ListItemText } from "@mui/material";
+import { List, ListItem, ListItemText, Box } from "@mui/material";
 
 const listItems = [
   "Verify first name, last name",
@@ -32,7 +29,6 @@ function Conversation({
       </Box>
       <AudioRecorder
         dispatch={dispatch}
-        tab={tab}
         fileName={fileName}
         summarizePhoneCall={summarizePhoneCall}
         switchTab={switchTab}

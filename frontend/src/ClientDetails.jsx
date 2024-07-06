@@ -1,22 +1,17 @@
 import { useState } from "react";
 
-import { ACTIONS } from "./constants";
-
 import {
   Button,
-  Divider,
   ListItem,
   ListItemText,
   TextField,
   Typography,
+  Box,
 } from "@mui/material";
-import Box from "@mui/material/Box";
-import { Margin } from "@mui/icons-material";
 
 const clientDetails = ["name", "phone"];
 
 function ClientDetails({
-  dispatch,
   clientData,
   onFetchGetClient,
   onFetchSummaryList,

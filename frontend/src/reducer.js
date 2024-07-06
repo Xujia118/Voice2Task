@@ -1,7 +1,6 @@
 import { ACTIONS } from "./constants";
 
 export const initialState = {
-  tab: 0,
   fileName: "",
   loading_summary: false,
   newSummary: "",
@@ -9,6 +8,7 @@ export const initialState = {
   allSummaries: [], 
   error: "",
   message: "",
+  loadingStatus: "",
 };
 
 export function reducer(state, action) {
@@ -23,6 +23,13 @@ export function reducer(state, action) {
       return {
         ...state,
         error: action.payload
+      }
+
+    case ACTIONS.LOADING_STATUS:
+      return {
+        ...state,
+        loadingStatus: action.payload
+        // sending audio, converting audio, summarizing
       }
 
       // To fix

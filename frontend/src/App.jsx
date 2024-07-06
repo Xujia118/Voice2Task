@@ -21,10 +21,6 @@ import "./App.css";
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const switchTab = (value) => {
-    dispatch({ type: "SET_TAB", payload: value });
-  };
-
   const summarizePhoneCall = async (fileName) => {
     try {
       await isTranscriptionComplete(fileName);
@@ -86,7 +82,6 @@ function App() {
       const data = await fetchGetClient(clientObj);
       dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
     } catch (err) {
-      console.log(err);
       dispatch({ type:ACTIONS.CLEAR_CLIENT_DATA })
       dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
     }
@@ -116,7 +111,6 @@ function App() {
       const data = await fetchGetSummaryList(clientObj);
       dispatch({ type: ACTIONS.FETCH_SUMMARY_LIST, payload: data.summaryList });
     } catch (err) {
-      console.log(err);
       dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
     }
   };
@@ -126,8 +120,6 @@ function App() {
       <Header />
       <WorkBench
         dispatch={dispatch}
-        tab={state.tab}
-        switchTab={switchTab}
         fileName={state.fileName}
         summarizePhoneCall={summarizePhoneCall}
         summary={state.newSummary}
