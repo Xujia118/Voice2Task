@@ -54,7 +54,7 @@ function ClientDetails({
       <Typography variant="h6" p={1} sx={{ textAlign: "center" }}>
         Query Client
       </Typography>
-      <Box height={250}>
+      <Box height={250} mt={2}>
         {error ? (
           <p style={{ marginLeft: "1rem" }}>{error}</p>
         ) : (

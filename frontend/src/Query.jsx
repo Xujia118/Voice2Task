@@ -3,7 +3,9 @@ import { List, ListItem, ListItemText, Typography } from "@mui/material";
 
 function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
   useEffect(() => {
-    onFetchSummaryList(clientData);
+    if (clientData.length > 0) {
+      onFetchSummaryList(clientData);
+    }
   }, []);
 
   if (error) {
@@ -11,7 +13,7 @@ function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
   }
 
   if (allSummaries.length === 0) {
-    return <p>This client has no summary yet.</p>;
+    return <p>No summary is found.</p>;
   }
 
   const formatDate = (dateString) => {

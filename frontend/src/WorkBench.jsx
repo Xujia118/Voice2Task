@@ -83,7 +83,7 @@ function WorkBench({
               >
                 <Tab label="conversation" {...a11yProps(0)} />
                 <Tab label="summary" {...a11yProps(1)} />
-                <Tab label="logs" {...a11yProps(2)} />
+                <Tab label="history" {...a11yProps(2)} />
               </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
