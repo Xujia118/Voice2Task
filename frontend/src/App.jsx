@@ -26,8 +26,14 @@ function App() {
     try {
       const uploadAudioMessage = await isAudioUploaded(blob, fileName);
 
-      if (uploadAudioMessage === "Audio uploaded successfully.") {
-        await isTranscriptionComplete(fileName);
+      if (uploadAudioMessage !== "Audio uploaded successfully.") {
+        throw new Error("Audio upload failed");
+      }
+
+      const transcriptionComplete = await isTranscriptionComplete(fileName);
+
+      if (!transcriptionComplete) {
+        throw new Error("Transcription did not complete successfully");
       }
 
       const data = await fetchSummary(fileName);
@@ -35,6 +41,7 @@ function App() {
       dispatch({ type: ACTIONS.SUMMARIZE, payload: data.summary });
     } catch (err) {
       console.error(err);
+      dispatch({ type: ACTIONS.ERROR, payload: err.message });
     }
   };
 
@@ -81,7 +88,7 @@ function App() {
           `Transcription status check attempt ${attempt + 1} failed:`,
           err
         );
-        if (attempt === maxAttempts - 1) throw error;
+        if (attempt === maxAttempts - 1) throw err;
       }
     }
     throw new Error("Transcription timed out");
