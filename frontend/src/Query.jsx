@@ -42,9 +42,20 @@ function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
                   <Typography variant="body1">{formattedDate}</Typography>
                 }
                 secondary={
-                  <Typography variant="body1">
-                    {listObj.summary_text}
-                  </Typography>
+                  <>
+                    <Typography variant="body1">
+                      <a
+                        href={listObj.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {listObj.url}
+                      </a>
+                    </Typography>
+                    <Typography variant="body1">
+                      {listObj.summary_text}
+                    </Typography>
+                  </>
                 }
               />
             </ListItem>

@@ -127,7 +127,7 @@ router.post("/get-summary-list", async (req, res) => {
 
   const client_id = client.client_id;
 
-  const q = `SELECT summary_text, created_at FROM summaries 
+  const q = `SELECT summary_text, created_at, url FROM summaries 
              INNER JOIN clients ON summaries.client_id = clients.client_id 
              WHERE clients.client_id = ?`;
   try {

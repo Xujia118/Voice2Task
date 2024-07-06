@@ -6,9 +6,6 @@ import multer from "multer";
 
 const router = express.Router();
 
-// Custom files import
-// import { getSummaryText, getSummaryAudioURL } from "./utils.js";
-
 // AWS imports
 import {
   S3Client,

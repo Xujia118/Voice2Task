@@ -1,19 +1,53 @@
 # Voice2Task
 
-A full-stack application that summarizes actions list for CRM
+A full-stack application for CRM. 
+After a phone conversation, it makes a summary and a list of actions for follow-up.
 
-(spaceholder for other content)
+## Table of Contents
+- [About the App](#about-the-app)
+    - Features
+- [Architecture](#architecture)
+    - Services
+- [Technical Stacks](#technical-stacks)
+    - Backend
+    - Frontend
+    - Database
+    - AWS Cloud Services
 
-# Dataflow
+# About the App
+## Features
+    - Record simulated phone conversation on computer
+    - Save audio file on AWS S3 bucket
+    - Transcribe audio to text using AWS Transcribe
+    - Summarize text and generate a list of actions using Claude AI
+    - Send the generated summary and list of actions to the user
+    - Query summary history of clients
+    - Streamlined operations such as add new summary to an existing or a new client with a single button
 
-Frontend: get audio file
-## Backend
-- post audio file to S3
-- get Transcribe to read audio file in S3, convert audio to speech and send text file back to S3 bucket (we can create new bucket for that)
-- fetch the text file in S3 and send it to AI for summary
-- fetch the summary from AI to 
-1. display on frontend
-2. send it to database for storage together with the url to the audio file in S3
+# Architecture
 
-Frontend: 
-Allow to query customer and actions lists
+
+
+# Technical Stacks
+## Backend - Services
+- Node.js
+- Express
+
+## Database
+- Mysql
+
+## Frontend
+- React.js
+- JavaScript
+- HTML
+- CSS
+- MUI
+
+## AWS Cloud Services
+- S3
+- AWS Transcribe
+- AWS RDS Mysql
+
+## Further Developments
+- Capture internal audio in computer regardless software source
+- Expand functions, for example, to give CRM managers a way to visualize team performance
