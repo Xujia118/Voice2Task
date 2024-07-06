@@ -2,7 +2,14 @@ import { useState } from "react";
 
 import { ACTIONS } from "./constants";
 
-import { Button, Divider, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Divider,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 
 const clientDetails = ["name", "phone"];
@@ -45,16 +52,19 @@ function ClientDetails({
   return (
     <>
       <Typography variant="h6" p={1} sx={{ textAlign: "center" }}>
-        Placerholder
+        Query Client
       </Typography>
       <Box height={250}>
         {error ? (
           <p>{error}</p>
         ) : (
-          Object.values(clientData).map((item) => <li key={item}>{item}</li>)
+          Object.entries(clientData).map(([label, item]) => (
+            <ListItem key={label}>
+              <ListItemText primary={`${label}: ${item}`} />
+            </ListItem>
+          ))
         )}
       </Box>
-      <Divider />
       <Box>
         <form onSubmit={handleSubmit}>
           {clientDetails.map((detail) => (
@@ -75,9 +85,11 @@ function ClientDetails({
               ></TextField>
             </Box>
           ))}
-          <Button variant="contained" type="submit">
-            Query
-          </Button>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button variant="contained" type="submit">
+              Query
+            </Button>
+          </Box>
         </form>
       </Box>
     </>
