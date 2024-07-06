@@ -6,8 +6,12 @@ function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
     console.log(allSummaries)
   }, []);
 
-  if (allSummaries.length === 0) {
+  if (error) {
     return <p>{error}</p>
+  }
+
+  if (allSummaries.length === 0) {
+    return <p>This client has no summary yet.</p>
   }
 
   return (

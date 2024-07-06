@@ -62,6 +62,7 @@ export function reducer(state, action) {
     case ACTIONS.FETCH_SUMMARY_LIST:
       return {
         ...state,
+        error: "",
         allSummaries: action.payload
       }
 

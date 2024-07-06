@@ -117,7 +117,6 @@ function App() {
       dispatch({ type: ACTIONS.FETCH_SUMMARY_LIST, payload: data.summaryList });
     } catch (err) {
       console.log(err);
-      // dispatch({ type: ACTIONS.FETCH_SUMMARY_LIST, payload: data.summaryList });
       dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
     }
   };

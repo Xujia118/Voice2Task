@@ -136,7 +136,6 @@ router.post("/get-summary-list", async (req, res) => {
   try {
     const result = await db.query(q, [client_id]);
     const summaryList = result[0]
-    console.log("summary list:", summaryList);
     res.json({ summaryList });
   } catch (err) {
     console.error("Error fetching summary list:", err);
