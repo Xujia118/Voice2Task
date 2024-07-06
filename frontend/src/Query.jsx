@@ -1,14 +1,14 @@
-import { Button } from "@mui/material";
 import { useEffect } from "react";
 
-function Query({ allSummaries, clientData, onFetchSummaryList }) {
-  if (!allSummaries) {
-    return <p>No records</p>;
-  }
-
+function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
   useEffect(() => {
     onFetchSummaryList(clientData)
+    console.log(allSummaries)
   }, []);
+
+  if (allSummaries.length === 0) {
+    return <p>{error}</p>
+  }
 
   return (
     <div>

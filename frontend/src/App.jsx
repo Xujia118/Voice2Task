@@ -33,8 +33,8 @@ function App() {
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
       const data = await fetchSummary(fileName);
-      
-      console.log("summary received:", data)
+
+      console.log("summary received:", data);
 
       dispatch({ type: ACTIONS.SUMMARIZE, payload: data.summary });
     } catch (err) {
@@ -85,13 +85,13 @@ function App() {
     try {
       const data = await fetchGetClient(clientObj);
       if (!data.clientData) {
-        dispatch({ type: ACTIONS.REPORT_ERROR, payload: data.message});
+        dispatch({ type: ACTIONS.REPORT_ERROR, payload: data.message });
       } else {
         dispatch({ type: ACTIONS.FETCH_CLIENT_DATA, payload: data.clientData });
       }
     } catch (err) {
       console.log(err);
-      dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error })
+      dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
     }
   };
 
@@ -107,7 +107,7 @@ function App() {
   const onFetchStoreSummary = async (clientObj) => {
     try {
       const data = await fetchStoreSummary(clientObj);
-      console.log("data:", data)
+      console.log("data:", data);
       dispatch({ type: ACTIONS.STORE_SUMMARY, payload: data.message });
     } catch (err) {
       console.log(err);
@@ -120,6 +120,8 @@ function App() {
       dispatch({ type: ACTIONS.FETCH_SUMMARY_LIST, payload: data.summaryList });
     } catch (err) {
       console.log(err);
+      // dispatch({ type: ACTIONS.FETCH_SUMMARY_LIST, payload: data.summaryList });
+      dispatch({ type: ACTIONS.REPORT_ERROR, payload: err?.error });
     }
   };
 
@@ -139,6 +141,7 @@ function App() {
         onFetchSummaryList={onFetchSummaryList}
         clientData={state.clientData}
         allSummaries={state.allSummaries}
+        error={state.error}
       />
     </>
   );

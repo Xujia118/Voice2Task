@@ -19,6 +19,13 @@ export function reducer(state, action) {
         fileName: action.payload,
       };
 
+    case ACTIONS.REPORT_ERROR:
+      return {
+        ...state,
+        error: action.payload
+      }
+
+      // To fix
     case ACTIONS.PICKUP_PHONE:
       return {
         ...state,
@@ -36,13 +43,6 @@ export function reducer(state, action) {
         ...state,
         clientData: action.payload,
       };
-
-    // create client
-    case ACTIONS.CREATE_CLIENT:
-      return {
-        ...state,
-
-      }
 
     // store summary
     case ACTIONS.STORE_SUMMARY:

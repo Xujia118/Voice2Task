@@ -52,6 +52,7 @@ function WorkBench({
   onFetchCreateClient,
   onFetchStoreSummary,
   onFetchSummaryList,
+  error
 }) {
   const [value, setValue] = useState(0);
 
@@ -68,6 +69,7 @@ function WorkBench({
             dispatch={dispatch}
             clientData={clientData}
             onFetchGetClient={onFetchGetClient}
+            error={error}
           />
         </Box>
         <Box sx={{ flex: 3 }}>
@@ -90,6 +92,7 @@ function WorkBench({
                 fileName={fileName}
                 summarizePhoneCall={summarizePhoneCall}
                 switchTab={switchTab}
+                error={error}
               />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
@@ -100,6 +103,7 @@ function WorkBench({
                 onFetchGetClient={onFetchGetClient}
                 onFetchCreateClient={onFetchCreateClient}
                 onFetchStoreSummary={onFetchStoreSummary}
+                error={error}
               />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
@@ -107,6 +111,7 @@ function WorkBench({
                 allSummaries={allSummaries}
                 clientData={clientData}
                 onFetchSummaryList={onFetchSummaryList}
+                error={error}
               />
             </CustomTabPanel>
           </Box>

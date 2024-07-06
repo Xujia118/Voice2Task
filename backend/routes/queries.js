@@ -29,7 +29,7 @@ async function createClient({ name, phone, email }) {
     console.log("Client created", result.insertId);
     return result.insertId;
   } catch (err) {
-    console.err("Error creating client:", err);
+    console.error("Error creating client:", err);
     throw err;
   }
 }
@@ -102,9 +102,9 @@ router.post("/store-summary", async (req, res) => {
   try {
     let client_id;
 
-    const findResult = await findClient({ name, phone });
-    if (findResult) {
-      client_id = findResult.client_id;
+    const client = await findClient({ name, phone });
+    if (client) {
+      client_id = client.client_id;
     } else {
       client_id = await createClient({ name, phone });
     }
@@ -122,12 +122,13 @@ router.post("/store-summary", async (req, res) => {
 router.post("/get-summary-list", async (req, res) => {
   const { name, phone } = req.body;
 
-  const clientObj = await findClient({ name, phone });
+  const client = await findClient({ name, phone });
+  
+  if (!client) {
+    return res.status(404).json({ error: "Client not found.", summaryList: [] })
+  }
 
-  // Handle case where clientObj is undefined: user doesn't exist in database  
-
-
-  const client_id = clientObj.client_id; 
+  const client_id = client.client_id; 
 
   const q = `SELECT summary_text, created_at FROM summaries 
              INNER JOIN clients ON summaries.client_id = clients.client_id 
