@@ -1,5 +1,3 @@
-![image](https://github.com/Xujia118/Voice2Task/assets/116283847/9a30c7cc-a592-4cdb-b7ff-b837fabb5d29)# Voice2Task
-
 A full-stack application for CRM. 
 After a phone conversation, it makes a summary and a list of actions for follow-up.
 
