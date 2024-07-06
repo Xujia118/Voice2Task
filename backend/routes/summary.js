@@ -150,7 +150,7 @@ router.post("/transcribe-audio-file", async (req, res) => {
     const data = await transcribeClient.send(command);
 
     res.status(200).json({
-      message: "Transcription job started",
+      message: "Transcribing...",
       jobName: data.TranscriptionJob.TranscriptionJobName,
     });
   } catch (err) {

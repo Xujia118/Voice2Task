@@ -109,7 +109,7 @@ const renderMobileMenu = (
 return (
   <header>
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" >
+      <AppBar position="static" sx={{ backgroundColor: "#3FA7D6" }}>
         <Toolbar>
           <IconButton
             size="large"

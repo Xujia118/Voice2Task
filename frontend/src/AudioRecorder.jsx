@@ -72,17 +72,17 @@ const AudioRecorder = ({
     >
       <p>{loadingStatus}</p>
       <audio controls src={recordedUrl} />
-      <Stack direction={"row"} spacing={2}>
+      <Stack direction={"row"} spacing={2} mt={2}>
         <Button
           variant="contained"
-          sx={{ backgroundColor: "red" }}
+          sx={{ backgroundColor: "#EE6352" }}
           onClick={stopRecording}
         >
           <PhoneDisabled />
         </Button>
         <Button
           variant="contained"
-          sx={{ backgroundColor: "green" }}
+          sx={{ backgroundColor: "#59CD90" }}
           onClick={startRecording}
         >
           <PhoneForwarded />
