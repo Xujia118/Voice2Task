@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import Box from "@mui/material/Box";
+import { Margin } from "@mui/icons-material";
 
 const clientDetails = ["name", "phone"];
 
@@ -38,7 +39,6 @@ function ClientDetails({
     e.preventDefault();
 
     // send the client data object to backend for query
-    console.log(localClientData);
     onFetchGetClient(localClientData);
     onFetchSummaryList(localClientData);
 
@@ -56,7 +56,7 @@ function ClientDetails({
       </Typography>
       <Box height={250}>
         {error ? (
-          <p>{error}</p>
+          <p style={{ marginLeft: "1rem" }}>{error}</p>
         ) : (
           Object.entries(clientData).map(([label, item]) => (
             <ListItem key={label}>
