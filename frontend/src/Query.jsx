@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { List, ListItem, ListItemText, Typography } from "@mui/material";
+import { VolumeUp } from "@mui/icons-material";
 
 function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
   useEffect(() => {
@@ -49,7 +50,7 @@ function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {listObj.url}
+                        <VolumeUp sx={{ color: "#3FA7D6" }} />
                       </a>
                     </Typography>
                     <Typography variant="body1">
