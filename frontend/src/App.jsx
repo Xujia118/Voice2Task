@@ -127,7 +127,6 @@ function App() {
   const onFetchStoreSummary = async (clientObj) => {
     try {
       const data = await fetchStoreSummary(clientObj);
-      console.log("data:", data);
       dispatch({ type: ACTIONS.STORE_SUMMARY, payload: data.message });
     } catch (err) {
       console.log(err);
@@ -159,6 +158,7 @@ function App() {
         clientData={state.clientData}
         allSummaries={state.allSummaries}
         loadingStatus={state.loadingStatus}
+        message={state.message}
         error={state.error}
       />
     </>

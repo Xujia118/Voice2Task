@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { ACTIONS } from "./constants";
 
 import { PhoneDisabled, PhoneForwarded } from "@mui/icons-material";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Paper, Stack } from "@mui/material";
 
 const AudioRecorder = ({
   fileName,
@@ -70,7 +70,9 @@ const AudioRecorder = ({
     <Box
       sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      <p>{loadingStatus}</p>
+      <Paper elevation={loadingStatus? 2 : 0} sx={{ margin: 2, padding: 1 }}>
+        {loadingStatus}
+      </Paper>
       <audio controls src={recordedUrl} />
       <Stack direction={"row"} spacing={2} mt={2}>
         <Button

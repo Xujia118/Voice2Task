@@ -17,7 +17,7 @@ function Conversation({
 }) {
   return (
     <div>
-      <Box sx={{ width: "100%", height: 350 }}>
+      <Box sx={{ width: "100%", height: 300 }}>
         <List>
           {listItems.map((item, index) => (
             <ListItem key={index}>

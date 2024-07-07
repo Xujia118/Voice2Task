@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, Paper, TextField } from "@mui/material";
 
 const clientDetails = ["name", "phone"];
 
-function Summary({ summary, audioUrl, clientData, onFetchStoreSummary }) {
+function Summary({ summary, audioUrl, clientData, onFetchStoreSummary, message }) {
   const [localClientData, setLocalClientData] = useState({
     name: "",
     phone: "",
@@ -44,7 +44,6 @@ function Summary({ summary, audioUrl, clientData, onFetchStoreSummary }) {
       summary_text: summary,
       url: audioUrl, 
     };
-    console.log(updatedLocalClientData);
     onFetchStoreSummary(updatedLocalClientData);
 
     // TODO: Add validation that forbids empty strings
@@ -72,6 +71,9 @@ function Summary({ summary, audioUrl, clientData, onFetchStoreSummary }) {
       <Box mt={2}>
         <p>{summary}</p>
       </Box>
+      <Paper elevation={message ? 2 : 0} sx={{ margin: 2, padding: 1 }}>
+        {message}
+      </Paper>
     </>
   );
 }

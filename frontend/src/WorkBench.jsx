@@ -54,6 +54,7 @@ function WorkBench({
   onFetchStoreSummary,
   onFetchSummaryList,
   loadingStatus,
+  message,
   error
 }) {
   const [value, setValue] = useState(0);
@@ -108,6 +109,7 @@ function WorkBench({
                 onFetchGetClient={onFetchGetClient}
                 onFetchCreateClient={onFetchCreateClient}
                 onFetchStoreSummary={onFetchStoreSummary}
+                message={message}
                 error={error}
               />
             </CustomTabPanel>
