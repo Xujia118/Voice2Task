@@ -1,14 +1,16 @@
 import * as React from "react";
 import { useState } from "react";
+
 import ClientDetails from "./ClientDetails";
+import Conversation from "./Conversation";
+import Summary from "./Summary";
+import Query from "./Query";
 
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import Conversation from "./Conversation";
-import Summary from "./Summary";
-import Query from "./Query";
+import { Badge } from "@mui/material";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -55,7 +57,7 @@ function WorkBench({
   onFetchSummaryList,
   loadingStatus,
   message,
-  error
+  error,
 }) {
   const [value, setValue] = useState(0);
 
@@ -85,7 +87,13 @@ function WorkBench({
                 aria-label="basic tabs example"
               >
                 <Tab label="conversation" {...a11yProps(0)} />
-                <Tab label="summary" {...a11yProps(1)} />
+                <Tab
+                  label="summary"
+                  {...a11yProps(1)}
+                  style={{
+                    backgroundColor: summary ? "#EE6352" : "transparent",
+                  }}
+                />
                 <Tab label="history" {...a11yProps(2)} />
               </Tabs>
             </Box>

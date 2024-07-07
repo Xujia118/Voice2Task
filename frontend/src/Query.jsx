@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { VolumeUp } from "@mui/icons-material";
 
 function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
@@ -40,11 +40,13 @@ function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
             <ListItem key={index}>
               <ListItemText
                 primary={
-                  <Typography variant="body1">{formattedDate}</Typography>
+                  <Typography variant="body2" component="span">
+                    {formattedDate}
+                  </Typography>
                 }
                 secondary={
                   <>
-                    <Typography variant="body1">
+                    <Typography variant="body" component="span">
                       <a
                         href={listObj.url}
                         target="_blank"
@@ -53,7 +55,7 @@ function Query({ allSummaries, clientData, onFetchSummaryList, error }) {
                         <VolumeUp sx={{ color: "#3FA7D6" }} />
                       </a>
                     </Typography>
-                    <Typography variant="body1">
+                    <Typography variant="body1" component="span">
                       {listObj.summary_text}
                     </Typography>
                   </>
