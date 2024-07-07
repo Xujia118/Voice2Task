@@ -90,9 +90,9 @@ function WorkBench({
                 <Tab
                   label="summary"
                   {...a11yProps(1)}
-                  style={{
-                    backgroundColor: summary ? "#EE6352" : "transparent",
-                  }}
+                  // style={{
+                  //   backgroundColor: summary ? "#EE6352" : "transparent",
+                  // }}
                 />
                 <Tab label="history" {...a11yProps(2)} />
               </Tabs>
