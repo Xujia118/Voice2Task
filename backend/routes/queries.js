@@ -107,8 +107,8 @@ router.post("/store-summary", async (req, res) => {
       client_id = await createClient({ name, phone });
     }
 
-    const result = await createSummary({ summary_text, url, client_id });
-    res.status(201).json({ messge: "Summary created successfully." });
+    await createSummary({ summary_text, url, client_id });
+    res.status(201).json({ message: "Summary created successfully." });
   } catch (err) {
     console.error("Error creating summary:", err);
     res.status(500).json({ error: "Error creating summary" });
